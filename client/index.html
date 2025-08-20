@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>Cyber Runner X</title>
+    <style>
+      #ext-warning {
+        position: fixed;
+        left: 0; right: 0; top: 0;
+        background: #ff3b3b; color: #fff;
+        font: 13px/1.4 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+        padding: 10px 14px; z-index: 9999; display: none;
+      }
+      #ext-warning a { color: #fff; text-decoration: underline; }
+    </style>
+    <script>
+      // Deteksi bentrok provider yang sering memicu "Cannot redefine property: ethereum"
+      (function(){
+        const show = (msg) => {
+          const bar = document.getElementById('ext-warning');
+          if (!bar) return;
+          bar.style.display = 'block';
+          bar.textContent = msg + ' — Open in Incognito / disable wallet & security extensions temporarily.';
+        };
+        // beberapa wallet menaruh window.ethereum.providers
+        const hasMulti =
+          typeof window !== 'undefined' &&
+          window.ethereum &&
+          Array.isArray(window.ethereum.providers) &&
+          window.ethereum.providers.length > 1;
+
+        // beberapa ekstensi re-define property 'ethereum'
+        // kita tidak bisa cegah dari sini, tapi bisa beri info awal:
+        if (hasMulti) {
+          show('Multiple wallet providers detected (extension conflict)');
+        } else {
+          // coba deteksi setelah DOM ready (beberapa ekstensi injeksi agak telat)
+          window.addEventListener('load', () => {
+            try {
+              const p = window.ethereum && window.ethereum.providers;
+              if (Array.isArray(p) && p.length > 1) {
+                show('Multiple wallet providers detected (extension conflict)');
+              }
+            } catch {}
+          });
+        }
+      })();
+    </script>
+  </head>
+  <body class="bg-black">
+    <div id="ext-warning"></div>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

@@ -1,0 +1,1780 @@
+{
+  "scores": [
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 51,
+      "at": "2025-08-19T01:48:01.252Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 110,
+      "at": "2025-08-19T01:48:08.627Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 52,
+      "at": "2025-08-19T01:49:04.175Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 4203,
+      "at": "2025-08-19T01:49:40.533Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 55,
+      "at": "2025-08-19T01:49:50.710Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 105,
+      "at": "2025-08-19T01:49:53.273Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 55,
+      "at": "2025-08-19T01:49:53.798Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 2219,
+      "at": "2025-08-19T01:50:09.874Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 55,
+      "at": "2025-08-19T01:53:54.782Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 52,
+      "at": "2025-08-19T01:53:55.835Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 64,
+      "at": "2025-08-19T01:53:56.818Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 49,
+      "at": "2025-08-19T01:59:04.238Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 100,
+      "at": "2025-08-19T01:59:09.868Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 352,
+      "at": "2025-08-19T01:59:18.268Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 54,
+      "at": "2025-08-19T01:59:20.400Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 788,
+      "at": "2025-08-19T01:59:27.200Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 52,
+      "at": "2025-08-19T01:59:30.913Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 112,
+      "at": "2025-08-19T01:59:32.549Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 827,
+      "at": "2025-08-19T01:59:38.815Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 170,
+      "at": "2025-08-19T01:59:41.764Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 343,
+      "at": "2025-08-19T01:59:44.763Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 818,
+      "at": "2025-08-19T01:59:51.028Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 350,
+      "at": "2025-08-19T01:59:55.659Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 64,
+      "at": "2025-08-19T01:59:56.512Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 587,
+      "at": "2025-08-19T02:00:01.008Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 115,
+      "at": "2025-08-19T02:00:02.243Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 710,
+      "at": "2025-08-19T02:00:07.577Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 59,
+      "at": "2025-08-19T02:00:08.474Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 191,
+      "at": "2025-08-19T02:00:10.174Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 350,
+      "at": "2025-08-19T02:00:13.808Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 470,
+      "at": "2025-08-19T02:00:17.456Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 827,
+      "at": "2025-08-19T02:00:23.624Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 55,
+      "at": "2025-08-19T02:00:24.413Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 127,
+      "at": "2025-08-19T02:00:25.672Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 127,
+      "at": "2025-08-19T02:00:26.971Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 319,
+      "at": "2025-08-19T02:00:29.739Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 187,
+      "at": "2025-08-19T02:00:34.336Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 496,
+      "at": "2025-08-19T02:00:38.254Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 129,
+      "at": "2025-08-19T02:00:39.519Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 669,
+      "at": "2025-08-19T02:00:46.453Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 62,
+      "at": "2025-08-19T02:00:49.917Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 64,
+      "at": "2025-08-19T02:00:51.167Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 52,
+      "at": "2025-08-19T02:00:52.301Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 2665,
+      "at": "2025-08-19T02:01:23.414Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 55,
+      "at": "2025-08-19T02:01:38.428Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 55,
+      "at": "2025-08-19T02:01:40.726Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 129,
+      "at": "2025-08-19T02:01:47.625Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 105,
+      "at": "2025-08-19T02:01:48.757Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 163,
+      "at": "2025-08-19T02:01:50.304Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 115,
+      "at": "2025-08-19T02:01:51.390Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 115,
+      "at": "2025-08-19T02:01:52.523Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 771,
+      "at": "2025-08-19T02:02:05.490Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 2411,
+      "at": "2025-08-19T02:02:23.538Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 108,
+      "at": "2025-08-19T02:09:04.711Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 76,
+      "at": "2025-08-19T02:15:53.553Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 4144,
+      "at": "2025-08-19T02:16:33.999Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 68,
+      "at": "2025-08-19T02:29:22.513Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 192,
+      "at": "2025-08-19T02:29:51.269Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 54,
+      "at": "2025-08-19T02:29:53.750Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 301,
+      "at": "2025-08-19T02:30:00.017Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 3815,
+      "at": "2025-08-19T02:31:14.961Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 501,
+      "at": "2025-08-19T02:31:23.487Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 119,
+      "at": "2025-08-19T02:31:24.718Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 470,
+      "at": "2025-08-19T02:31:29.036Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 182,
+      "at": "2025-08-19T02:31:30.701Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 875,
+      "at": "2025-08-19T02:31:40.802Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 585,
+      "at": "2025-08-19T02:32:24.627Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 422,
+      "at": "2025-08-19T02:32:27.908Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 131,
+      "at": "2025-08-19T02:32:29.191Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 52,
+      "at": "2025-08-19T02:32:29.892Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 131,
+      "at": "2025-08-19T02:32:35.258Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 501,
+      "at": "2025-08-19T02:32:39.089Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 94,
+      "at": "2025-08-19T02:35:49.814Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 1647,
+      "at": "2025-08-19T02:38:42.173Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 371,
+      "at": "2025-08-19T02:44:54.440Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 67,
+      "at": "2025-08-19T02:44:54.722Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 376,
+      "at": "2025-08-19T02:44:57.771Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 638,
+      "at": "2025-08-19T02:45:02.555Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 62,
+      "at": "2025-08-19T02:45:06.185Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 491,
+      "at": "2025-08-19T02:45:11.491Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 172,
+      "at": "2025-08-19T02:45:13.418Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 8573,
+      "at": "2025-08-19T02:58:50.862Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 92,
+      "at": "2025-08-19T02:59:11.733Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 113,
+      "at": "2025-08-19T02:59:21.548Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 1169,
+      "at": "2025-08-19T02:59:31.681Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 182,
+      "at": "2025-08-19T02:59:33.628Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 110,
+      "at": "2025-08-19T02:59:34.811Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 441,
+      "at": "2025-08-19T02:59:38.296Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 859,
+      "at": "2025-08-19T02:59:45.794Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 559,
+      "at": "2025-08-19T02:59:55.842Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 177,
+      "at": "2025-08-19T02:59:57.507Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 199,
+      "at": "2025-08-19T02:59:59.256Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 62,
+      "at": "2025-08-19T03:00:00.206Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 64,
+      "at": "2025-08-19T03:00:01.008Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 52,
+      "at": "2025-08-19T03:00:10.373Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 302,
+      "at": "2025-08-19T03:00:21.188Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 374,
+      "at": "2025-08-19T03:00:24.152Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 441,
+      "at": "2025-08-19T03:00:31.555Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 112,
+      "at": "2025-08-19T03:00:32.702Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 52,
+      "at": "2025-08-19T03:02:18.675Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 114,
+      "at": "2025-08-19T03:03:10.094Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 52,
+      "at": "2025-08-19T03:04:53.836Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 70,
+      "at": "2025-08-19T03:15:06.432Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 89,
+      "at": "2025-08-19T03:15:23.404Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 105,
+      "at": "2025-08-19T03:29:21.871Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 141,
+      "at": "2025-08-19T09:28:20.210Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 864,
+      "at": "2025-08-19T09:28:29.199Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 111,
+      "at": "2025-08-19T09:28:34.834Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 431,
+      "at": "2025-08-19T09:28:39.949Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 283,
+      "at": "2025-08-19T09:29:36.342Z"
+    },
+    {
+      "player": "0x0",
+      "username": "guest",
+      "score": 21015,
+      "at": "2025-08-19T11:20:25.733Z"
+    },
+    {
+      "player": "0x0",
+      "username": "guest",
+      "score": 181,
+      "at": "2025-08-19T11:20:40.719Z"
+    },
+    {
+      "player": "0x0",
+      "username": "guest",
+      "score": 42,
+      "at": "2025-08-19T11:20:42.726Z"
+    },
+    {
+      "player": "0x0",
+      "username": "guest",
+      "score": 46,
+      "at": "2025-08-19T11:20:43.449Z"
+    },
+    {
+      "player": "0x0",
+      "username": "guest",
+      "score": 46,
+      "at": "2025-08-19T11:20:44.311Z"
+    },
+    {
+      "player": "0x0",
+      "username": "guest",
+      "score": 45,
+      "at": "2025-08-19T11:20:45.279Z"
+    },
+    {
+      "player": "0x0",
+      "username": "guest",
+      "score": 59,
+      "at": "2025-08-19T11:20:46.505Z"
+    },
+    {
+      "player": "0x0",
+      "username": "guest",
+      "score": 556,
+      "at": "2025-08-19T11:20:52.033Z"
+    },
+    {
+      "player": "0x0",
+      "username": "guest",
+      "score": 1251,
+      "at": "2025-08-19T11:25:48.161Z"
+    },
+    {
+      "player": "0x0",
+      "username": "guest",
+      "score": 168,
+      "at": "2025-08-19T11:26:04.093Z"
+    },
+    {
+      "player": "0x0",
+      "username": "guest",
+      "score": 369,
+      "at": "2025-08-19T11:26:09.506Z"
+    },
+    {
+      "player": "0x0",
+      "username": "guest",
+      "score": 139,
+      "at": "2025-08-19T11:26:12.182Z"
+    },
+    {
+      "player": "0x0",
+      "username": "guest",
+      "score": 86,
+      "at": "2025-08-19T11:26:14.255Z"
+    },
+    {
+      "player": "0x0",
+      "username": "guest",
+      "score": 674,
+      "at": "2025-08-19T11:26:20.451Z"
+    },
+    {
+      "player": "0x0",
+      "username": "guest",
+      "score": 2926,
+      "at": "2025-08-19T11:26:37.530Z"
+    },
+    {
+      "player": "0x0",
+      "username": "guest",
+      "score": 2034,
+      "at": "2025-08-19T11:26:48.135Z"
+    },
+    {
+      "player": "0x0",
+      "username": "guest",
+      "score": 1225,
+      "at": "2025-08-19T11:26:57.483Z"
+    },
+    {
+      "player": "0x0",
+      "username": "guest",
+      "score": 653,
+      "at": "2025-08-19T11:27:03.481Z"
+    },
+    {
+      "player": "0x0",
+      "username": "guest",
+      "score": 385,
+      "at": "2025-08-19T11:27:08.362Z"
+    },
+    {
+      "player": "0x0",
+      "username": "guest",
+      "score": 1108,
+      "at": "2025-08-19T11:27:15.963Z"
+    },
+    {
+      "player": "0x0",
+      "username": "guest",
+      "score": 393,
+      "at": "2025-08-19T11:27:27.644Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 51,
+      "at": "2025-08-19T11:40:42.609Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 78,
+      "at": "2025-08-19T11:41:36.486Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 53,
+      "at": "2025-08-19T11:41:44.786Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 171,
+      "at": "2025-08-19T11:41:50.668Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 157,
+      "at": "2025-08-19T11:41:52.932Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 170,
+      "at": "2025-08-19T11:41:55.032Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 123,
+      "at": "2025-08-19T11:41:56.550Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 350,
+      "at": "2025-08-19T11:41:59.514Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 55,
+      "at": "2025-08-19T11:42:00.447Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 345,
+      "at": "2025-08-19T11:42:03.333Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 323,
+      "at": "2025-08-19T11:42:05.981Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 55,
+      "at": "2025-08-19T11:42:07.396Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 244,
+      "at": "2025-08-19T11:42:09.480Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 311,
+      "at": "2025-08-19T11:42:53.557Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 575,
+      "at": "2025-08-19T11:43:06.840Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 191,
+      "at": "2025-08-19T11:43:10.736Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 110,
+      "at": "2025-08-19T11:43:15.588Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 117,
+      "at": "2025-08-19T11:43:17.202Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 1003,
+      "at": "2025-08-19T11:43:24.552Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 68,
+      "at": "2025-08-19T11:44:01.319Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 2924,
+      "at": "2025-08-19T11:47:04.096Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 372,
+      "at": "2025-08-19T11:47:49.457Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 586,
+      "at": "2025-08-19T11:48:06.403Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 698,
+      "at": "2025-08-19T11:48:32.049Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 257,
+      "at": "2025-08-19T11:48:38.949Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 79,
+      "at": "2025-08-19T11:48:55.401Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 1796,
+      "at": "2025-08-19T11:56:47.787Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 117,
+      "at": "2025-08-19T11:57:15.930Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 324,
+      "at": "2025-08-19T11:57:22.913Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 57,
+      "at": "2025-08-19T11:58:25.399Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 75,
+      "at": "2025-08-19T11:58:34.364Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 831,
+      "at": "2025-08-19T11:59:02.765Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 69,
+      "at": "2025-08-19T11:59:18.745Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 591,
+      "at": "2025-08-19T11:59:50.373Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 394,
+      "at": "2025-08-19T11:59:57.422Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 335,
+      "at": "2025-08-19T12:00:03.525Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 173,
+      "at": "2025-08-19T12:00:08.908Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 126,
+      "at": "2025-08-19T12:00:13.354Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 1254,
+      "at": "2025-08-19T12:00:27.739Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 219,
+      "at": "2025-08-19T12:00:34.470Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 95,
+      "at": "2025-08-19T12:00:38.252Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 97,
+      "at": "2025-08-19T12:00:42.102Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 220,
+      "at": "2025-08-19T12:00:48.151Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 91,
+      "at": "2025-08-19T12:21:04.586Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 109,
+      "at": "2025-08-19T12:23:29.665Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 13687,
+      "at": "2025-08-19T12:24:27.738Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 822,
+      "at": "2025-08-19T12:24:39.116Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 344,
+      "at": "2025-08-19T12:24:49.149Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 293,
+      "at": "2025-08-19T12:24:56.180Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 19,
+      "at": "2025-08-19T12:24:59.769Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 179,
+      "at": "2025-08-19T12:25:05.144Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 249,
+      "at": "2025-08-19T12:25:12.060Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 619,
+      "at": "2025-08-19T12:25:23.711Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 838,
+      "at": "2025-08-19T12:25:45.055Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 2437,
+      "at": "2025-08-19T18:10:24.603Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 160,
+      "at": "2025-08-19T18:11:02.962Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 807,
+      "at": "2025-08-19T18:13:38.874Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 165,
+      "at": "2025-08-19T18:15:37.269Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 307,
+      "at": "2025-08-19T18:15:59.814Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 709,
+      "at": "2025-08-20T02:48:32.452Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 108,
+      "at": "2025-08-20T03:06:10.014Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 4531,
+      "at": "2025-08-20T03:07:30.023Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 114,
+      "at": "2025-08-20T04:39:28.925Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 37,
+      "at": "2025-08-20T04:39:43.516Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 45,
+      "at": "2025-08-20T04:40:04.203Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 783,
+      "at": "2025-08-20T04:40:22.506Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 116,
+      "at": "2025-08-20T04:40:59.282Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 73,
+      "at": "2025-08-20T04:41:07.970Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 44,
+      "at": "2025-08-20T04:41:24.498Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 54,
+      "at": "2025-08-20T04:41:27.751Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 241,
+      "at": "2025-08-20T04:41:33.454Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 161,
+      "at": "2025-08-20T04:41:43.771Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 108,
+      "at": "2025-08-20T04:41:48.647Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 113,
+      "at": "2025-08-20T04:41:53.545Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 46,
+      "at": "2025-08-20T04:41:56.396Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 70,
+      "at": "2025-08-20T04:42:11.915Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 415,
+      "at": "2025-08-20T04:42:19.796Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 49,
+      "at": "2025-08-20T04:42:23.076Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 228,
+      "at": "2025-08-20T04:42:32.735Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 327,
+      "at": "2025-08-20T05:04:21.517Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 316,
+      "at": "2025-08-20T05:04:39.915Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 237,
+      "at": "2025-08-20T05:04:45.892Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 120,
+      "at": "2025-08-20T05:04:50.706Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 324,
+      "at": "2025-08-20T05:04:58.230Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 15680759,
+      "at": "2025-08-20T06:39:24.505Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 89,
+      "at": "2025-08-20T06:39:27.872Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 698,
+      "at": "2025-08-20T06:39:59.482Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 122,
+      "at": "2025-08-20T06:40:06.300Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 229,
+      "at": "2025-08-20T06:40:12.811Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 1575,
+      "at": "2025-08-20T06:40:30.893Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 109,
+      "at": "2025-08-20T06:43:33.887Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 907,
+      "at": "2025-08-20T06:43:47.444Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 974,
+      "at": "2025-08-20T06:49:17.022Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 874,
+      "at": "2025-08-20T06:49:30.253Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 83,
+      "at": "2025-08-20T06:49:48.783Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 67,
+      "at": "2025-08-20T06:49:52.824Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 10,
+      "at": "2025-08-20T06:49:53.757Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 86,
+      "at": "2025-08-20T06:49:57.531Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 4,
+      "at": "2025-08-20T06:49:57.916Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 51,
+      "at": "2025-08-20T06:50:00.753Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 151,
+      "at": "2025-08-20T06:50:09.663Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 81,
+      "at": "2025-08-20T06:50:11.954Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 150,
+      "at": "2025-08-20T06:50:15.566Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 788,
+      "at": "2025-08-20T06:50:26.674Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 60,
+      "at": "2025-08-20T06:55:04.535Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 62,
+      "at": "2025-08-20T06:55:49.500Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 159,
+      "at": "2025-08-20T06:55:55.981Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 91,
+      "at": "2025-08-20T06:55:58.218Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 112,
+      "at": "2025-08-20T06:56:00.796Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 45,
+      "at": "2025-08-20T06:56:02.514Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 12654,
+      "at": "2025-08-20T07:55:35.544Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 114,
+      "at": "2025-08-20T07:55:39.602Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 536,
+      "at": "2025-08-20T07:55:46.951Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 149,
+      "at": "2025-08-20T07:55:50.867Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 148,
+      "at": "2025-08-20T07:55:54.467Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 123,
+      "at": "2025-08-20T07:55:59.818Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 299,
+      "at": "2025-08-20T07:56:11.075Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 79,
+      "at": "2025-08-20T07:56:14.103Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 313,
+      "at": "2025-08-20T07:56:20.469Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 318,
+      "at": "2025-08-20T08:18:37.869Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 105,
+      "at": "2025-08-20T08:18:43.516Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 82,
+      "at": "2025-08-20T08:18:46.296Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 1032,
+      "at": "2025-08-20T08:18:58.081Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 283,
+      "at": "2025-08-20T08:19:09.878Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 333,
+      "at": "2025-08-20T08:19:21.093Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 52,
+      "at": "2025-08-20T08:35:05.556Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 79,
+      "at": "2025-08-20T08:35:15.357Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 349,
+      "at": "2025-08-20T08:35:27.156Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 252,
+      "at": "2025-08-20T08:35:33.421Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 67,
+      "at": "2025-08-20T08:35:35.901Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 528,
+      "at": "2025-08-20T08:35:44.453Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 40,
+      "at": "2025-08-20T08:35:49.925Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 105,
+      "at": "2025-08-20T08:36:33.045Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 498,
+      "at": "2025-08-20T08:36:39.459Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 8,
+      "at": "2025-08-20T08:36:42.207Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 425,
+      "at": "2025-08-20T08:36:50.474Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 420,
+      "at": "2025-08-20T08:36:59.123Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 2657,
+      "at": "2025-08-20T08:37:22.019Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 66,
+      "at": "2025-08-20T08:38:02.491Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 143,
+      "at": "2025-08-20T12:13:04.001Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 604,
+      "at": "2025-08-20T12:13:17.764Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 466,
+      "at": "2025-08-20T12:13:28.210Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 497,
+      "at": "2025-08-20T12:13:38.458Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 74,
+      "at": "2025-08-20T12:16:31.998Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 68,
+      "at": "2025-08-20T12:16:35.559Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 447,
+      "at": "2025-08-20T12:16:42.360Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 396,
+      "at": "2025-08-20T12:16:52.142Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 125,
+      "at": "2025-08-20T12:24:37.144Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 171,
+      "at": "2025-08-20T12:25:12.574Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 57,
+      "at": "2025-08-20T12:28:03.798Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 171,
+      "at": "2025-08-20T12:28:13.114Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 110,
+      "at": "2025-08-20T12:30:23.804Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 356,
+      "at": "2025-08-20T12:30:35.188Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 70,
+      "at": "2025-08-20T12:30:53.918Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 370,
+      "at": "2025-08-20T12:31:28.930Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 80,
+      "at": "2025-08-20T12:31:33.092Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 47,
+      "at": "2025-08-20T12:32:04.786Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 301,
+      "at": "2025-08-20T12:35:06.044Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 1006,
+      "at": "2025-08-20T12:39:10.899Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 147,
+      "at": "2025-08-20T12:40:14.665Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 42,
+      "at": "2025-08-20T14:08:53.490Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 48,
+      "at": "2025-08-20T14:09:07.619Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 371,
+      "at": "2025-08-20T14:09:19.254Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 32,
+      "at": "2025-08-20T14:09:37.418Z"
+    },
+    {
+      "player": "0x97f4bd5497f59975910e7d8a5d6ec3cbf4ea49e1",
+      "username": "Maxis",
+      "score": 30,
+      "at": "2025-08-20T14:11:22.831Z"
+    }
+  ]
+}
