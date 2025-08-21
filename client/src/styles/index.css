@@ -2,164 +2,168 @@
 @tailwind components;
 @tailwind utilities;
 
-/* =========== THEME TOKENS (sinkron semua warna) =========== */
+/* ===================== SUPER PREMIUM THEME ===================== */
 :root{
-  --aurora-1: 168, 85, 247;  /* #A855F7 (purple)   */
-  --aurora-2: 34, 211, 238;  /* #22D3EE (cyan)     */
-  --aurora-3: 255, 122, 230; /* #FF7AE6 (magenta)  */
+  /* Aurora triad — sinkron ke seluruh aksen */
+  --aurora-1: 168, 85, 247;   /* #A855F7 (purple)   */
+  --aurora-2: 34, 211, 238;   /* #22D3EE (cyan)     */
+  --aurora-3: 255, 122, 230;  /* #FF7AE6 (magenta)  */
   --aurora-intensity: 1.0;
 
-  --bg-top:  #0b0e1a;
-  --bg-mid:  #080a14;
-  --bg-bot:  #06070d;
+  /* Night gradient */
+  --bg-top: #0a0c16;
+  --bg-mid: #080a14;
+  --bg-bot: #06070d;
 
-  --card:   rgba(255,255,255,0.06);
-  --card-2: rgba(255,255,255,0.035);
-  --text:   #ececf1;
+  /* Glass tones */
+  --card:   rgba(255,255,255,.06);
+  --card-2: rgba(255,255,255,.035);
+  --text:   #eef0f6;
+
+  /* Sheen highlight */
+  --sheen-1: rgba(255,255,255,.28);
+  --sheen-2: rgba(255,255,255,.06);
 }
 
 html, body, #root { height: 100%; }
 *, *::before, *::after { box-sizing: border-box; }
-body {
+body{
   color: var(--text);
   background:
-    radial-gradient(1400px 900px at 10% -10%,
-      rgba(var(--aurora-1), calc(.18 * var(--aurora-intensity))) 0%,
-      transparent 55%),
-    radial-gradient(1200px 800px at 110% 0%,
-      rgba(var(--aurora-2), calc(.16 * var(--aurora-intensity))) 0%,
-      transparent 60%),
-    radial-gradient(1100px 900px at -10% 110%,
-      rgba(var(--aurora-3), calc(.14 * var(--aurora-intensity))) 0%,
-      transparent 60%),
+    radial-gradient(1300px 900px at 10% -10%, rgba(var(--aurora-1), calc(.18*var(--aurora-intensity))) 0%, transparent 55%),
+    radial-gradient(1100px 750px at 110% 0%, rgba(var(--aurora-2), calc(.16*var(--aurora-intensity))) 0%, transparent 60%),
+    radial-gradient(1200px 900px at -10% 110%, rgba(var(--aurora-3), calc(.14*var(--aurora-intensity))) 0%, transparent 60%),
     linear-gradient(180deg, var(--bg-top) 0%, var(--bg-mid) 55%, var(--bg-bot) 100%);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
 }
 
-/* Konten utama selalu di atas layer aurora */
+/* konten selalu di atas aurora */
 main, header, nav, .container { position: relative; z-index: 1; }
 
-/* ===== Animated aurora (di bawah konten) ===== */
+/* ===== Aurora layers (tanpa “footer block”) ===== */
 body::before,
-body::after {
+body::after{
   content:"";
   position: fixed;
-  inset: -20% -10% auto -10%;
-  height: 62vh;
-  z-index: 0;
   pointer-events: none;
-  background:
-    radial-gradient(60% 60% at 20% 30%,
-      rgba(var(--aurora-1), calc(.28 * var(--aurora-intensity))) 0%,
-      transparent 60%),
-    radial-gradient(52% 52% at 80% 40%,
-      rgba(var(--aurora-2), calc(.22 * var(--aurora-intensity))) 0%,
-      transparent 60%),
-    radial-gradient(42% 42% at 50% 80%,
-      rgba(255,255,255,.05) 0%,
-      transparent 60%);
+  z-index: 0;
   filter: blur(64px) saturate(140%);
-  transform: translate3d(0,0,0);
   animation: auroraFloat 18s ease-in-out infinite alternate;
 }
-body::after{
-  inset: auto -12% -25% -12%;
-  height: 48vh;
+body::before{
+  inset: -20% -10% auto -10%;
+  height: 60vh;
   background:
-    radial-gradient(58% 58% at 70% 30%,
-      rgba(var(--aurora-1), calc(.22 * var(--aurora-intensity))) 0%,
-      transparent 60%),
-    radial-gradient(50% 50% at 30% 70%,
-      rgba(var(--aurora-2), calc(.20 * var(--aurora-intensity))) 0%,
-      transparent 62%),
-    radial-gradient(40% 40% at 50% 50%,
-      rgba(var(--aurora-3), calc(.16 * var(--aurora-intensity))) 0%,
-      transparent 60%);
-  animation-duration: 22s;
-  animation-delay: -6s;
+    radial-gradient(60% 60% at 25% 30%, rgba(var(--aurora-1), .28) 0%, transparent 60%),
+    radial-gradient(52% 52% at 78% 35%, rgba(var(--aurora-2), .22) 0%, transparent 60%),
+    radial-gradient(40% 40% at 52% 82%, rgba(255,255,255,.06) 0%, transparent 60%);
 }
-@keyframes auroraFloat {
-  0%   { transform: translate3d(0, 0, 0) scale(1);    opacity: .9; }
-  100% { transform: translate3d(0, -10px, 0) scale(1.03); opacity: 1; }
+body::after{
+  /* jauh lebih lebar + dimask, jadi tidak terlihat kotak */
+  inset: auto -30% -36% -30%;
+  height: 58vh;
+  background:
+    radial-gradient(58% 58% at 70% 30%, rgba(var(--aurora-1), .22) 0%, transparent 60%),
+    radial-gradient(50% 50% at 30% 70%, rgba(var(--aurora-2), .20) 0%, transparent 62%),
+    radial-gradient(40% 40% at 50% 50%, rgba(var(--aurora-3), .16) 0%, transparent 60%);
+  animation-duration: 22s; animation-delay: -6s;
+  -webkit-mask-image: radial-gradient(120% 90% at 50% 50%, #000 55%, transparent 100%);
+          mask-image: radial-gradient(120% 90% at 50% 50%, #000 55%, transparent 100%);
+  opacity: .92;
+}
+@keyframes auroraFloat{
+  0%   { transform: translate3d(0,0,0) scale(1);    opacity:.9; }
+  100% { transform: translate3d(0,-10px,0) scale(1.03); opacity:1; }
 }
 
-/* ================= COMPONENT POLISH (tanpa ubah JSX) ================= */
+/* ===================== COMPONENT POLISH ===================== */
 @layer components{
 
-  /* Card glass + gradient rim */
+  /* Card glass + gradient rim + reflection + tanpa clip */
   .card{
-    @apply rounded-2xl border border-white/10 bg-white/5 relative overflow-hidden;
+    @apply rounded-2xl border border-white/10 bg-white/5 relative;
     background: linear-gradient(180deg, var(--card), var(--card-2));
-    transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+    overflow: visible;
+    transition: transform .28s ease, box-shadow .28s ease, border-color .28s ease, background .28s ease;
     will-change: transform;
     z-index: 1;
   }
-  .card:hover{
-    transform: translateY(-2px);
-    box-shadow:
-      0 18px 42px -20px rgba(var(--aurora-1), .45),
-      0 8px 28px -20px rgba(var(--aurora-2), .35);
-  }
+  /* rim gradient di bawah konten */
   .card::before{
     content:"";
-    position:absolute; inset:-1px;
-    border-radius: 1rem;
-    padding: 1px;
+    position:absolute; inset:-1px; border-radius:1rem; padding:1px; z-index:0;
     background:
       linear-gradient(135deg,
         rgba(var(--aurora-1), .75),
         rgba(var(--aurora-2), .6),
         rgba(var(--aurora-3), .45));
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-            mask-composite: exclude;
-    pointer-events: none;
-    opacity: .36;
+    -webkit-mask-composite: xor; mask-composite: exclude;
+    pointer-events: none; opacity:.34;
   }
-  .card-tight{ @apply card p-4; }
+  /* glass reflection */
+  .card::after{
+    content:"";
+    position:absolute; inset:0; border-radius:1rem; z-index:0;
+    background:
+      linear-gradient( to bottom right, var(--sheen-1) 0%, transparent 35%),
+      linear-gradient( to top left, transparent 60%, var(--sheen-2) );
+    mix-blend-mode: screen; opacity:.20; pointer-events:none;
+    transition: opacity .28s ease;
+  }
+  .card:hover{
+    transform: translateY(-2px);
+    box-shadow:
+      0 22px 48px -24px rgba(var(--aurora-1), .50),
+      0 10px 32px -22px rgba(var(--aurora-2), .36);
+  }
+  .card:hover::after{ opacity:.28; }
 
-  /* ==== FIX CLIPPING: heading diberi ruang & line-height aman ==== */
-  h1, h2, h3 { line-height: 1.3; padding-top: 2px; }
-  .font-semibold { line-height: 1.3; }
-  /* header dalam card (baris judul di atas tabel/sektion) */
-  .card > .flex .font-semibold,
-  .card > .font-semibold { padding-top: 3px; }
+  /* Safe headings (hindari kepotong) */
+  h1, h2, h3 { line-height: 1.35; margin-top: 2px; }
+  .font-semibold { line-height: 1.35; }
+  .card > .font-semibold,
+  .card > .flex .font-semibold { padding-top: 4px; }
 
-  /* Khusus card yang berisi canvas (game) – biar canvas bebas */
-  .card:has(canvas){ overflow: visible; }
-  .card:has(canvas) canvas{ border-radius: 1rem; display: block; }
+  /* Game canvas tetap rapi */
+  .card:has(canvas) canvas{ border-radius:1rem; display:block; }
 
-  /* Metric teks */
-  .metric{ @apply text-xs uppercase tracking-wider text-zinc-400; }
-  .metric-xl{ @apply text-2xl font-semibold; letter-spacing: .2px; }
+  /* Metric typography */
+  .metric{ @apply text-xs uppercase tracking-wider text-zinc-400; letter-spacing: .08em; }
+  .metric-xl{
+    @apply text-2xl font-semibold;
+    letter-spacing:.2px;
+    text-shadow: 0 1px 0 rgba(0,0,0,.25), 0 6px 18px rgba(168,85,247,.18);
+  }
 
-  /* Info cell (On-chain Status) */
+  /* Info cell (On-chain) */
   .rounded-lg.border.border-white\/10{
     position: relative;
     background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
   }
   .rounded-lg.border.border-white\/10::after{
-    content:"";
-    position:absolute; inset:0; border-radius: .75rem;
+    content:""; position:absolute; inset:0; border-radius:.75rem; pointer-events:none;
     box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
-    pointer-events:none;
   }
 
-  /* Badge glow */
-  .bg-emerald-500\/15{ box-shadow: 0 0 0 1px rgba(52,211,153,.28) inset, 0 0 24px rgba(16,185,129,.24); }
-  .bg-amber-500\/15{  box-shadow: 0 0 0 1px rgba(251,191,36,.28) inset, 0 0 24px rgba(245,158,11,.24); }
-  .bg-rose-500\/15{   box-shadow: 0 0 0 1px rgba(244,63,94,.28) inset, 0 0 24px rgba(244,63,94,.24); }
+  /* Status badge glow */
+  .bg-emerald-500\/15{ box-shadow:0 0 0 1px rgba(52,211,153,.28) inset, 0 0 24px rgba(16,185,129,.24); }
+  .bg-amber-500\/15{  box-shadow:0 0 0 1px rgba(251,191,36,.28) inset, 0 0 24px rgba(245,158,11,.24); }
+  .bg-rose-500\/15{   box-shadow:0 0 0 1px rgba(244,63,94,.28) inset, 0 0 24px rgba(244,63,94,.24); }
 
-  /* Tabel */
+  /* Tabel mewah */
   table.min-w-full thead tr{
     background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
   }
-  table.min-w-full tbody tr{ transition: background-color .15s ease; }
-  table.min-w-full tbody tr:hover{ background-color: rgba(255,255,255,.045); }
+  table.min-w-full tbody tr{ transition: background-color .16s ease, box-shadow .16s ease; }
+  table.min-w-full tbody tr:hover{
+    background-color: rgba(255,255,255,.045);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.04), inset 0 -1px 0 rgba(255,255,255,.04);
+  }
 
-  /* Buttons */
+  /* Buttons premium */
   .btn{
     @apply inline-flex items-center justify-center rounded-xl px-4 py-2;
     background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.06));
@@ -172,28 +176,37 @@ body::after{
     border-color: rgba(255,255,255,.18);
   }
   .btn:active{ transform: translateY(0); }
-
   .btn-primary{
     background:
-      linear-gradient(90deg,
-        rgba(var(--aurora-1), .20),
-        rgba(var(--aurora-2), .20)),
-      linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.06));
-    border-color: rgba(var(--aurora-1), .45);
-    box-shadow: inset 0 0 0 1px rgba(var(--aurora-1), .38);
+      linear-gradient(90deg, rgba(var(--aurora-1), .22), rgba(var(--aurora-2), .22)),
+      linear-gradient(180deg, rgba(255,255,255,.16), rgba(255,255,255,.08));
+    border-color: rgba(var(--aurora-1), .48);
+    box-shadow: inset 0 0 0 1px rgba(var(--aurora-1), .40);
   }
   .btn-primary:hover{
     background:
-      linear-gradient(90deg,
-        rgba(var(--aurora-1), .26),
-        rgba(var(--aurora-2), .26)),
-      linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.08));
+      linear-gradient(90deg, rgba(var(--aurora-1), .28), rgba(var(--aurora-2), .28)),
+      linear-gradient(180deg, rgba(255,255,255,.20), rgba(255,255,255,.10));
     box-shadow:
-      0 14px 30px -16px rgba(var(--aurora-1), .50),
-      inset 0 0 0 1px rgba(var(--aurora-1), .48);
+      0 14px 30px -16px rgba(var(--aurora-1), .52),
+      inset 0 0 0 1px rgba(var(--aurora-1), .50);
+  }
+
+  /* Backdrop blur (progressive enhancement) */
+  @supports (backdrop-filter: blur(8px)) or (-webkit-backdrop-filter: blur(8px)) {
+    .card, .rounded-lg.border.border-white\/10{
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
   }
 }
 
-/* Minor utilities */
-a { transition: opacity .15s ease; }
-a:hover { opacity: .85; }
+/* Link polish */
+a{ transition: opacity .15s ease; }
+a:hover{ opacity:.85; }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce){
+  body::before, body::after{ animation: none !important; }
+  .card, .btn{ transition: none !important; }
+}
