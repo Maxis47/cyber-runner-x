@@ -16,8 +16,7 @@ const ALLOW = (process.env.ALLOW_ORIGIN || '*').split(',');
 const RPC = process.env.MONAD_TESTNET_RPC_URL || 'https://testnet-rpc.monad.xyz';
 const PK = process.env.SERVER_PRIVATE_KEY; // address ini harus didaftarkan sebagai _game
 const CONTRACT = '0xceCBFF203C8B6044F52CE23D914A1bfD997541A4';
-// opsional: set kalau mau paksa link explorer di client
-const EXPLORER_TX_PREFIX = process.env.EXPLORER_TX_PREFIX || ''; // contoh: https://explorer.testnet/tx/
+const EXPLORER_TX_PREFIX = process.env.EXPLORER_TX_PREFIX || ''; // optional
 
 // ----- chain clients -----
 if (!PK) {
@@ -104,10 +103,13 @@ app.get('/tx/:hash', async (req, res) => {
     const { hash } = req.params;
     const explorerUrl = EXPLORER_TX_PREFIX ? `${EXPLORER_TX_PREFIX}${hash}` : undefined;
 
-    // try getTransaction; kalau belum ada => queued
-    let tx;
-    try { tx = await publicClient.getTransaction({ hash }); } catch { tx = null; }
+    // 1) coba ambil tx (bisa kasih nonce meski belum mined)
+    let tx = null;
+    try { tx = await publicClient.getTransaction({ hash }); } catch {}
+
+    // 2) kalau tx belum ada di node sama sekali → queued
     if (!tx) {
+      const head = await publicClient.getBlockNumber();
       return res.json({
         stage: 'queued',
         hash,
@@ -116,19 +118,19 @@ app.get('/tx/:hash', async (req, res) => {
         confirmations: 0,
         gasUsed: null,
         status: null,
-        head: Number(await publicClient.getBlockNumber()),
+        head: Number(head),
         explorerUrl
       });
     }
 
     const nonce = Number(tx.nonce);
 
-    // receipt?
-    let rcpt;
-    try { rcpt = await publicClient.getTransactionReceipt({ hash }); } catch { rcpt = null; }
+    // 3) coba receipt (kalau belum ada → pending)
+    let rcpt = null;
+    try { rcpt = await publicClient.getTransactionReceipt({ hash }); } catch {}
 
     if (!rcpt) {
-      // masih pending
+      const head = await publicClient.getBlockNumber();
       return res.json({
         stage: 'pending',
         hash,
@@ -137,11 +139,12 @@ app.get('/tx/:hash', async (req, res) => {
         confirmations: 0,
         gasUsed: null,
         status: null,
-        head: Number(await publicClient.getBlockNumber()),
+        head: Number(head),
         explorerUrl
       });
     }
 
+    // 4) mined → hitung confirmations & detail
     const head = await publicClient.getBlockNumber();
     const blockNumber = Number(rcpt.blockNumber);
     const confirmations = Math.max(1, Number(head - rcpt.blockNumber + 1n));
