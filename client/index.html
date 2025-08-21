@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <!-- Kunci viewport: cegah zoom, aman untuk notch (viewport-fit=cover) -->
+    <!-- Viewport stabil (no-zoom, safe for notch) -->
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no, interactive-widget=overlays-content"
@@ -13,37 +13,35 @@
     <title>Cyber Runner X</title>
 
     <style>
-      /* Stabilkan tinggi & sentuh */
-      html, body, #root { height: 100%; min-height: 100%; }
+      /* Tinggi dikunci ke --app-vh (dibekukan) + 100svh sebagai fallback modern */
+      html, body, #root { height: var(--app-vh, 100svh); min-height: var(--app-vh, 100svh); }
       * { -webkit-tap-highlight-color: transparent; }
       body { margin: 0; background: #0B0B12; overscroll-behavior-y: none; }
     </style>
 
     <script>
-      // --- Set --app-vh agar tinggi stabil (hindari jump/zoom saat address bar muncul/hilang) ---
+      // --- Bekukan tinggi viewport (hindari auto-zoom saat address bar hide/show) ---
       (function () {
-        function setVH() {
+        function freezeVH() {
           const vv = window.visualViewport;
           const h = vv ? vv.height : window.innerHeight;
           document.documentElement.style.setProperty('--app-vh', h + 'px');
         }
-        setVH();
-        window.addEventListener('resize', setVH, { passive: true });
-        window.addEventListener('orientationchange', setVH, { passive: true });
-        if (window.visualViewport) {
-          window.visualViewport.addEventListener('resize', setVH, { passive: true });
-          window.visualViewport.addEventListener('scroll', setVH, { passive: true });
-        }
+        // set sekali saat load
+        freezeVH();
+        // update hanya saat orientasi berubah (bukan saat user scroll)
+        window.addEventListener('orientationchange', function () {
+          setTimeout(freezeVH, 250);
+        }, { passive: true });
+        // juga saat kembali dari bground
+        window.addEventListener('pageshow', function(){ setTimeout(freezeVH, 150); }, { passive: true });
       })();
 
-      // --- Mobile hardening: cegah pinch & double-tap zoom (Android & iOS) ---
+      // --- Cegah pinch/double-tap zoom ---
       (function () {
         const prevent = e => { e.preventDefault(); };
-        // Pinch (iOS Safari event)
         document.addEventListener('gesturestart', prevent, { passive: false });
-        // Zoom via Ctrl+Wheel (Android/desktop)
         document.addEventListener('wheel', e => { if (e.ctrlKey) e.preventDefault(); }, { passive: false });
-        // Double-tap zoom
         let lastTouch = 0;
         document.addEventListener('touchend', e => {
           const now = Date.now();
@@ -52,32 +50,16 @@
         }, { passive: false });
       })();
 
-      // --- Reset skala jika kembali dari OAuth / modal auth (menghindari "auto-zoom") ---
-      (function () {
-        const meta = document.querySelector('meta[name="viewport"]');
-        function resetScale() {
-          if (!meta) return;
-          const base = "width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no, interactive-widget=overlays-content";
-          meta.setAttribute('content', base); // forcing back to scale=1
-        }
-        window.addEventListener('pageshow', resetScale);
-        document.addEventListener('visibilitychange', resetScale);
-      })();
-
-      // --- iPhone sign-in stuck (popup diblokir / 3rd-party cookies) ---
-      // Paksa semua window.open ke URL "auth/login/wallet/privy" menjadi FULL-PAGE REDIRECT di iOS.
+      // --- iOS: paksa auth jadi full-page redirect (bypass popup blocker/ITP) ---
       (function () {
         const ua = navigator.userAgent || '';
         const isIOS = /iP(hone|od|ad)/.test(ua);
         if (!isIOS) return;
-
         const originalOpen = window.open;
-        window.open = function (url, name, specs) {
+        window.open = function (url) {
           try {
             if (typeof url === 'string' && /(privy|auth|login|connect|wallet)/i.test(url)) {
-              // Redirect penuh: pasti lolos ITP & popup blocker
-              location.href = url;
-              return null;
+              location.href = url; return null;
             }
           } catch (_) {}
           return originalOpen ? originalOpen.apply(window, arguments) : null;
