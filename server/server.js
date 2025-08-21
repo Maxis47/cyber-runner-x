@@ -1,4 +1,3 @@
-// server/server.js — viem + lowdb (tanpa native build)
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
@@ -11,12 +10,19 @@ import { privateKeyToAccount } from 'viem/accounts';
 import { addScore, getLeaderboard, getPlayer } from './db.js';
 
 // ----- env -----
-const PORT = Number(process.env.PORT || 3000);
-const RAW_ALLOW = process.env.ALLOW_ORIGIN || '*';
+const PORT = process.env.PORT || 3000;
+const ALLOW = (process.env.ALLOW_ORIGIN || process.env.ALLOW_ORIGINS || '*').split(',');
 const RPC = process.env.MONAD_TESTNET_RPC_URL || 'https://testnet-rpc.monad.xyz';
 const PK = process.env.SERVER_PRIVATE_KEY; // address ini harus didaftarkan sebagai _game
-const CONTRACT = '0xceCBFF203C8B6044F52CE23D914A1bfD997541A4';
-const EXPLORER_TX_PREFIX = (process.env.EXPLORER_TX_PREFIX || '').replace(/\/+$/, '') || ''; // optional
+const CONTRACT = process.env.CONTRACT || '0xceCBFF203C8B6044F52CE23D914A1bfD997541A4';
+const EXPLORER_TX_PREFIX_RAW = process.env.EXPLORER_TX_PREFIX || ''; // optional
+
+// Normalisasi explorer prefix (hindari /tx/tx/)
+function explorerUrlFor(hash) {
+  if (!EXPLORER_TX_PREFIX_RAW) return undefined;
+  const base = EXPLORER_TX_PREFIX_RAW.trim().replace(/\s+/g, '').replace(/\/+$/, '');
+  return `${base}/${hash}`;
+}
 
 // ----- chain clients -----
 if (!PK) {
@@ -34,46 +40,15 @@ const ABI = parseAbi([
 
 // ----- app -----
 const app = express();
-app.disable('x-powered-by');
-app.use(helmet({ crossOriginResourcePolicy: false }));
+app.use(helmet());
 app.use(express.json());
-
-// ====== CORS yang toleran (termasuk Origin:null) ======
-const ALLOW_LIST = RAW_ALLOW.split(',').map(s => s.trim()).filter(Boolean);
-const allowAll = ALLOW_LIST.includes('*');
-
-app.use(cors({
-  origin: (origin, cb) => {
-    // Tanpa Origin (mis. curl/Postman) & Origin:null (mobile webview) -> izinkan
-    if (!origin || origin === 'null') return cb(null, true);
-    if (allowAll) return cb(null, true);
-
-    // cocokkan exact origin, atau host saja
-    if (ALLOW_LIST.includes(origin)) return cb(null, true);
-    try {
-      const u = new URL(origin);
-      if (ALLOW_LIST.includes(u.origin) || ALLOW_LIST.includes(u.host)) {
-        return cb(null, true);
-      }
-    } catch {}
-    return cb(new Error('CORS blocked'));
-  },
-  credentials: false,
-  methods: ['GET', 'POST', 'OPTIONS'],
-  optionsSuccessStatus: 204,
-}));
-
+app.use(cors({ origin: (origin, cb) => cb(null, true), credentials: false }));
 app.use(morgan('dev'));
 
-// rate limit ringan
 const limiter = new RateLimiterMemory({ points: 8, duration: 10 });
 app.use(async (req, res, next) => {
-  try {
-    await limiter.consume(req.ip);
-    next();
-  } catch {
-    res.status(429).json({ error: 'Too many requests' });
-  }
+  try { await limiter.consume(req.ip); next(); }
+  catch { res.status(429).json({ error: 'Too many requests' }); }
 });
 
 // no-cache helper
@@ -89,11 +64,24 @@ app.get('/health', (req, res) => res.json({ ok: true }));
 app.get('/debug/signer', async (req, res) => {
   try {
     const bal = await publicClient.getBalance({ address: account.address });
-    res.json({ address: account.address, balanceWei: bal.toString(), allow: ALLOW_LIST });
+    res.json({ address: account.address, balanceWei: bal.toString() });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
 });
+
+// ====== Anti double-submit (dedupe in-memory) ======
+const inflight = new Map(); // key: `${player}:${score}` → Promise<{ ok, tx, explorerUrl }>
+
+async function writeScoreTx(player, score) {
+  const hash = await walletClient.writeContract({
+    address: CONTRACT,
+    abi: ABI,
+    functionName: 'updatePlayerData',
+    args: [player, BigInt(Math.floor(score)), 1n],
+  });
+  return { ok: true, tx: hash, explorerUrl: explorerUrlFor(hash) };
+}
 
 // Submit score → simpan ke DB → kirim tx on-chain (incremental)
 app.post('/submit-score', async (req, res) => {
@@ -103,19 +91,22 @@ app.post('/submit-score', async (req, res) => {
       return res.status(400).json({ error: 'Invalid payload' });
     }
 
-    // simpan lokal dulu (untuk leaderboard & grafik)
+    // Simpan lokal dulu (untuk leaderboard & grafik)
     await addScore({ player, username, score });
 
-    // kirim ke chain — tambahkan (bukan total)
-    const hash = await walletClient.writeContract({
-      address: CONTRACT,
-      abi: ABI,
-      functionName: 'updatePlayerData',
-      args: [player, BigInt(Math.floor(score)), 1n]
-    });
+    const key = `${player.toLowerCase()}:${Math.floor(score)}`;
+    if (inflight.has(key)) {
+      // Gunakan TX yang sama (hindari dobel)
+      const out = await inflight.get(key);
+      return res.json(out);
+    }
 
-    const explorerUrl = EXPLORER_TX_PREFIX ? `${EXPLORER_TX_PREFIX}/tx/${hash}`.replace(/\/+tx\//,'/tx/') : undefined;
-    return res.json({ ok: true, tx: hash, explorerUrl });
+    const p = writeScoreTx(player, score)
+      .finally(() => setTimeout(() => inflight.delete(key), 15000)); // auto hapus 15s
+
+    inflight.set(key, p);
+    const out = await p;
+    return res.json(out);
   } catch (e) {
     console.error(e);
     const msg = e?.shortMessage || e?.message || 'tx error';
@@ -146,7 +137,7 @@ app.get('/tx/:hash', async (req, res) => {
   noStore(res);
   try {
     const { hash } = req.params;
-    const explorerUrl = EXPLORER_TX_PREFIX ? `${EXPLORER_TX_PREFIX}/tx/${hash}`.replace(/\/+tx\//,'/tx/') : undefined;
+    const explorerUrl = explorerUrlFor(hash);
 
     let tx = null;
     try { tx = await publicClient.getTransaction({ hash }); } catch {}
@@ -193,11 +184,11 @@ app.get('/tx/:hash', async (req, res) => {
   }
 });
 
-// Fast ensure: tunggu sampai mined (maks 12s), langsung balikin detail
+// Fast ensure: tunggu sampai mined (maks 12s)
 app.get('/tx/ensure/:hash', async (req, res) => {
   noStore(res);
   const { hash } = req.params;
-  const explorerUrl = EXPLORER_TX_PREFIX ? `${EXPLORER_TX_PREFIX}/tx/${hash}`.replace(/\/+tx\//,'/tx/') : undefined;
+  const explorerUrl = explorerUrlFor(hash);
 
   try {
     const rcpt = await publicClient.waitForTransactionReceipt({
@@ -205,11 +196,9 @@ app.get('/tx/ensure/:hash', async (req, res) => {
       timeout: 12_000,
       pollingInterval: 800,
     });
-
     let tx = null;
     try { tx = await publicClient.getTransaction({ hash }); } catch {}
     const nonce = tx ? Number(tx.nonce) : null;
-
     const head = await publicClient.getBlockNumber();
     return res.json({ ...serializeMined(hash, nonce, rcpt, head), explorerUrl });
   } catch (e) {
@@ -259,6 +248,4 @@ app.get('/tx/ensure/:hash', async (req, res) => {
 app.get('/leaderboard', (req, res) => res.json(getLeaderboard(50)));
 app.get('/player/:addr', (req, res) => res.json(getPlayer(req.params.addr)));
 
-app.listen(PORT, () =>
-  console.log(`Server on :${PORT}  ALLOW_ORIGIN=${ALLOW_LIST.join(',') || '*'}  BASE_EXPLORER=${EXPLORER_TX_PREFIX}`)
-);
+app.listen(PORT, () => console.log(`Server on :${PORT}`));
