@@ -1,66 +1,31 @@
 // client/src/lib/api.js
-const RAW_BASE =
-  (import.meta?.env?.VITE_API_URL ?? "") ||
-  (import.meta?.env?.VITE_API_BASE ?? "");
-
 function normalizeBase(v) {
   if (!v) return "";
-  let s = String(v).trim();
-  // buang trailing slash
-  s = s.replace(/\/+$/, "");
-  // kalau belum ada protokol, anggap https
-  if (!/^https?:\/\//i.test(s)) s = `https://${s}`;
-  return s;
+  let u = String(v).trim();
+  if (!/^https?:\/\//i.test(u)) u = "https://" + u;
+  return u.replace(/\/+$/,"");
 }
 
-// 1) coba dari env (URL lengkap atau host)
-// 2) kalau kosong, fallback ke origin saat ini (berguna utk dev)
-const BASE = normalizeBase(RAW_BASE) || `${window.location.protocol}//${window.location.host}`;
+// Dukung dua nama env: VITE_API_URL atau VITE_API_BASE
+const BASE = normalizeBase(
+  import.meta.env.VITE_API_URL ||
+  import.meta.env.VITE_API_BASE ||
+  import.meta.env.VITE_API
+);
 
-// optional: mudahin debug tanpa ubah UI
-// (bisa diliat di DevTools -> console -> window.__API_BASE__)
-window.__API_BASE__ = BASE;
+const noStore = { cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } };
 
-// helper buat compose url
-const to = (p) => `${BASE}${p}`;
-
-export async function submitScore({ player, username, score }) {
-  const res = await fetch(to(`/submit-score`), {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ player, username, score }),
+export async function submitScore({ player, username, score }){
+  const res = await fetch(`${BASE}/submit-score`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' },
+    body: JSON.stringify({ player, username, score })
   });
-  if (!res.ok) {
-    const txt = await res.text().catch(() => "");
-    throw new Error(txt || `submit failed: ${res.status}`);
-  }
-  return res.json(); // { ok, tx, explorerUrl? }
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
 }
 
-export async function fetchLeaderboard() {
-  const r = await fetch(to(`/leaderboard`), { cache: "no-store" });
-  if (!r.ok) throw new Error(`leaderboard ${r.status}`);
-  return r.json();
-}
-
-export async function fetchPlayer(a) {
-  const r = await fetch(to(`/player/${a}`), { cache: "no-store" });
-  if (!r.ok) throw new Error(`player ${r.status}`);
-  return r.json();
-}
-
-export async function fetchUsername(a) {
-  const r = await fetch(
-    `https://monad-games-id-site.vercel.app/api/check-wallet?wallet=${a}`,
-    { cache: "no-store" }
-  );
-  if (!r.ok) throw new Error(`username ${r.status}`);
-  return r.json();
-}
-
-// pakai endpoint cepat agar value muncul lebih sigap
-export async function getTxStatus(hash) {
-  const r = await fetch(to(`/tx/ensure/${hash}`), { cache: "no-store" });
-  if (!r.ok) throw new Error(`tx ${r.status}`);
-  return r.json();
-}
+export async function fetchLeaderboard(){ const r = await fetch(`${BASE}/leaderboard`, noStore); return r.json(); }
+export async function fetchPlayer(a){ const r = await fetch(`${BASE}/player/${a}`, noStore); return r.json(); }
+export async function fetchUsername(a){ const r = await fetch(`https://monad-games-id-site.vercel.app/api/check-wallet?wallet=${a}`, noStore); return r.json(); }
+export async function getTxStatus(hash){ const r = await fetch(`${BASE}/tx/${hash}`, noStore); return r.json(); }
