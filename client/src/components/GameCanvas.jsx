@@ -19,8 +19,9 @@ export default function GameCanvas({ wrapRef, canvasRef, className = "" }) {
       style={{
         marginLeft: "auto",
         marginRight: "auto",
-        // stabil di mobile biar tidak "zoomed" ketika scroll address bar
-        maxHeight: "calc(var(--app-vh, 100vh) - 24px)",
+        /* Kunci tinggi container terhadap vh beku → tidak "zoomed" saat scroll */
+        height: "auto",
+        maxHeight: "calc(var(--app-vh, 100svh) - 24px)",
         touchAction: "manipulation",
         overscrollBehavior: "contain",
       }}
