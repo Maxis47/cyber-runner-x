@@ -1,108 +1,69 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-    <!-- Viewport stabil + no-zoom + aman notch -->
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no, interactive-widget=overlays-content"
-    />
-    <!-- No-cache keras di level dokumen -->
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-    <meta http-equiv="Pragma" content="no-cache" />
-    <meta http-equiv="Expires" content="0" />
+/* ===== Fondasi stabil ===== */
+:root { color-scheme: dark; }
+/* kunci ke viewport yang beku (lihat index.html) */
+html, body, #root { height: var(--app-vh, 100svh); min-height: var(--app-vh, 100svh); }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+* { -webkit-tap-highlight-color: transparent; }
+/* cegah auto-zoom saat fokus input */
+input, select, textarea, button { font-size: 16px; }
 
-    <meta name="format-detection" content="telephone=no" />
-    <meta name="theme-color" content="#0B0B12" />
-    <title>Cyber Runner X</title>
+/* High contrast guard */
+@media (forced-colors: active) {
+  * { forced-color-adjust: none; }
+  body { background: #0b0b12 !important; color: #e9e9f8 !important; }
+}
 
-    <style>
-      /* Bekukan tinggi viewport dan pindahkan scroll ke #root (bukan body) */
-      :root { --app-vh: 100svh; }
-      html, body { height: var(--app-vh); min-height: var(--app-vh); overflow: hidden; }
-      #root { height: var(--app-vh); min-height: var(--app-vh); overflow: auto; -webkit-overflow-scrolling: touch; }
-      * { -webkit-tap-highlight-color: transparent; }
-      body { margin: 0; background: #0B0B12; overscroll-behavior: none; }
-    </style>
+/* ===== Aurora premium (vivid & sinkron) ===== */
+body{
+  --bg1:#07070b;
+  --bg2:#0b0b14;
+  --aur1: rgba(168,85,247,.28);
+  --aur2: rgba(34,211,238,.22);
+  --aur3: rgba(236,72,153,.22);
 
-    <script>
-      // ===== 1) Bekukan tinggi viewport (hindari "auto-zoom" karena address bar) =====
-      (function () {
-        function freezeVH() {
-          const vv = window.visualViewport;
-          const h = vv ? Math.round(vv.height) : window.innerHeight;
-          document.documentElement.style.setProperty('--app-vh', h + 'px');
-        }
-        freezeVH();
-        window.addEventListener('orientationchange', () => setTimeout(freezeVH, 250), { passive: true });
-        window.addEventListener('pageshow', () => setTimeout(freezeVH, 150), { passive: true });
+  background:
+    radial-gradient(1200px 820px at 18% -10%, var(--aur1), transparent 40%),
+    radial-gradient(980px 680px at 108% 12%, var(--aur2), transparent 45%),
+    radial-gradient(900px 600px at -10% 96%, var(--aur3), transparent 50%),
+    linear-gradient(180deg, var(--bg1), var(--bg2));
+  background-attachment: fixed;
+  color:#e8e8f6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
-        // Update saat visualViewport resize, tapi JANGAN biarkan event resize window liar
-        if (window.visualViewport) {
-          visualViewport.addEventListener('resize', () => setTimeout(freezeVH, 50), { passive: true });
-        }
-      })();
+/* Komponen glassy */
+.card{
+  @apply rounded-2xl border border-white/10 p-4;
+  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+  backdrop-filter: blur(10px);
+}
+.card-tight{
+  @apply rounded-xl border border-white/10 p-3;
+  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+  backdrop-filter: blur(8px);
+}
+.btn{ @apply rounded-md border border-white/15 px-3 py-1; }
+.btn-primary{
+  @apply rounded-md px-3 py-1 font-medium;
+  background: linear-gradient(90deg,#8b5cf6,#06b6d4);
+  color: #fff;
+  box-shadow: 0 0 28px rgba(139,92,246,.28), 0 0 24px rgba(6,182,212,.18) inset;
+}
 
-      // ===== 2) Saring resize event yang hanya berubah WIDTH yang kita ijinkan =====
-      // (height-only resize dari toolbar/omnibox akan kita tahan supaya Game.jsx tidak re-layout tiba-tiba)
-      (function () {
-        let lastW = window.innerWidth || document.documentElement.clientWidth;
-        window.addEventListener('resize', function (e) {
-          const w = window.innerWidth || document.documentElement.clientWidth;
-          if (Math.abs(w - lastW) < 2) {
-            e.stopImmediatePropagation && e.stopImmediatePropagation();
-            return;
-          }
-          lastW = w;
-        }, true);
-      })();
+.metric     { @apply text-[11px] uppercase tracking-wide text-zinc-400; }
+.metric-xl  { @apply text-2xl font-bold; }
 
-      // ===== 3) Cegah pinch & double-tap zoom =====
-      (function () {
-        const prevent = e => { e.preventDefault(); };
-        document.addEventListener('gesturestart', prevent, { passive: false });
-        document.addEventListener('wheel', e => { if (e.ctrlKey) e.preventDefault(); }, { passive: false });
-        let lastTouch = 0;
-        document.addEventListener('touchend', e => {
-          const now = Date.now();
-          if (now - lastTouch < 300) e.preventDefault();
-          lastTouch = now;
-        }, { passive: false });
-      })();
+/* Recharts tooltip */
+.recharts-default-tooltip {
+  background: rgba(0,0,0,.86) !important;
+  border: 1px solid rgba(255,255,255,.12) !important;
+  color: #e8e8f6 !important;
+}
 
-      // ===== 4) iOS: auth → full-page redirect (bypass popup blocker/ITP) =====
-      (function () {
-        const ua = navigator.userAgent || '';
-        const isIOS = /iP(hone|od|ad)/.test(ua);
-        if (!isIOS) return;
-        const originalOpen = window.open;
-        window.open = function (url) {
-          try {
-            if (typeof url === 'string' && /(privy|auth|login|connect|wallet)/i.test(url)) {
-              location.href = url; return null;
-            }
-          } catch (_) {}
-          return originalOpen ? originalOpen.apply(window, arguments) : null;
-        };
-      })();
-
-      // ===== 5) Unregister service worker lama (hindari bundle ketahan cache) =====
-      (function () {
-        if ('serviceWorker' in navigator) {
-          navigator.serviceWorker.getRegistrations().then(regs => {
-            for (const r of regs) r.unregister();
-          }).catch(() => {});
-        }
-      })();
-
-      // (Opsional) Kalau mau override base API manual dari HTML (debug)
-      // window.__API_BASE__ = "https://cyber-runner-x-production.up.railway.app";
-    </script>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
-</html>
+/* Gesture stabil */
+body { overscroll-behavior: contain; }
