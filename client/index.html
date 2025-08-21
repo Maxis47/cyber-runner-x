@@ -10,7 +10,7 @@
       content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no, interactive-widget=overlays-content"
     />
 
-    <!-- Matikan caching level dokumen (bantu device yang keras kepala) -->
+    <!-- Matikan caching level dokumen -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
@@ -23,7 +23,6 @@
       /* ===== Bekukan viewport & pindahkan scroll ke #root (anti auto-zoom) ===== */
       :root { --app-vh: 100svh; }
       html, body { height: var(--app-vh); min-height: var(--app-vh); }
-      /* body fixed → tidak ikut “memanjang/mengecil” saat address bar show/hide */
       body {
         margin: 0;
         background: #0B0B12;
@@ -33,7 +32,6 @@
         overscroll-behavior-y: none;
         -webkit-font-smoothing: antialiased;
       }
-      /* scroll dipindah ke #root agar layout stabil */
       #root{
         position: fixed; inset: 0;
         height: 100%; min-height: 100%;
@@ -44,13 +42,12 @@
     </style>
 
     <script>
-      // 1) Bekukan tinggi viewport: address bar tidak memicu reflow layout
+      // 1) Bekukan tinggi viewport agar address bar tidak memicu "zoom"
       (function () {
         function freezeVH() {
           const vv = window.visualViewport;
           const h = vv ? Math.round(vv.height) : window.innerHeight;
           document.documentElement.style.setProperty('--app-vh', h + 'px');
-          // Pastikan body ikut tinggi terbaru
           document.body && (document.body.style.height = h + 'px');
         }
         freezeVH();
@@ -58,12 +55,12 @@
         window.addEventListener('pageshow', () => setTimeout(freezeVH, 150), { passive: true });
       })();
 
-      // 2) Saring resize event yang hanya ubah TINGGI (efek address bar)
+      // 2) Saring resize yang cuma ubah tinggi (efek address bar)
       (function () {
         let lastW = window.innerWidth || document.documentElement.clientWidth;
         window.addEventListener('resize', function (e) {
           const w = window.innerWidth || document.documentElement.clientWidth;
-          if (Math.abs(w - lastW) < 2) {  // height-only change → tahan
+          if (Math.abs(w - lastW) < 2) {
             e.stopImmediatePropagation && e.stopImmediatePropagation();
             return;
           }
@@ -100,15 +97,12 @@
         };
       })();
 
-      // 5) Unregister service worker lama (hindari JS versi lama yang bikin data “hilang”)
+      // 5) Unregister service worker lama (hindari JS lama yang bikin data “hilang”)
       (function () {
         if ('serviceWorker' in navigator) {
-          navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister())).catch(()=>{});
+          navigator.serviceWorker.getRegistrations().then(rs => rs.forEach(r => r.unregister())).catch(()=>{});
         }
       })();
-
-      // (Optional) override manual kalau mau:
-      // window.__API_BASE__ = "https://cyber-runner-x-production.up.railway.app";
     </script>
   </head>
   <body>
