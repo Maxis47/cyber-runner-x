@@ -1,4 +1,3 @@
-// client/src/components/GameCanvas.jsx
 import React from "react";
 
 /**
@@ -17,11 +16,19 @@ export default function GameCanvas({ wrapRef, canvasRef, className = "" }) {
          shadow-[0_0_80px_rgba(0,0,0,0.25)]
          flex items-center justify-center ${className}`
       }
-      style={{ marginLeft: "auto", marginRight: "auto" }}
+      style={{
+        marginLeft: "auto",
+        marginRight: "auto",
+        // stabil di mobile biar tidak "zoomed" ketika scroll address bar
+        maxHeight: "calc(var(--app-vh, 100vh) - 24px)",
+        touchAction: "manipulation",
+        overscrollBehavior: "contain",
+      }}
     >
       <canvas
         ref={canvasRef}
         onContextMenu={(e) => e.preventDefault()}
+        draggable={false}
         style={{
           display: "block",
           width: "100%",
