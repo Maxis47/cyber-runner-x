@@ -19,32 +19,24 @@ export default function RequireMGID({ children }) {
   const [checking, setChecking] = useState(false);
   const [identity, setIdentity] = useState(null); // { address, username }
 
-  // === FIX iOS stuck: panggil login DI DALAM gesture klik tanpa await + fallback otomatis ===
-  const openMGIDModal = useCallback(() => {
+  const openMGIDModal = useCallback(async () => {
     try {
-      let resolved = false;
-      const redirectTo = window.location.href; // balik ke halaman yang sama
-
+      // Prefer direct cross-app if SDK mendukung; fallback ke login() biasa
       if (typeof loginWithCrossAppAccount === "function") {
-        Promise
-          .resolve(loginWithCrossAppAccount({ providerAppId: CROSS_APP_ID, createAccount: true, redirectTo }))
-          .then(() => { resolved = true; })
-          .catch((e) => { console.error("MGID cross-app error:", e); });
+        await loginWithCrossAppAccount({
+          providerAppId: CROSS_APP_ID,
+          createAccount: true,
+          // 🔧 PENTING UNTUK MOBILE: pastikan redirect kembali ke app
+          redirectTo: window.location.origin,
+        });
       } else {
-        Promise
-          .resolve(login({ redirectTo }))
-          .then(() => { resolved = true; })
-          .catch((e) => { console.error("MGID login error:", e); });
+        await login({
+          // 🔧 sama: redirect balik ke app
+          redirectTo: window.location.origin,
+        });
       }
-
-      // Popup kadang diblokir iOS → paksa fallback login() setelah 2.5s jika belum resolved
-      window.setTimeout(() => {
-        if (!resolved) {
-          Promise.resolve(login({ redirectTo })).catch(() => {});
-        }
-      }, 2500);
     } catch (e) {
-      console.error("MGID login invoke error:", e);
+      console.error("MGID login error:", e);
     }
   }, [login, loginWithCrossAppAccount]);
 
@@ -73,11 +65,10 @@ export default function RequireMGID({ children }) {
         return;
       }
 
-      // Cek username MGID (NO-CACHE supaya selalu fresh di semua device)
+      // Cek username MGID
       try {
         const r = await fetch(
-          `https://monad-games-id-site.vercel.app/api/check-wallet?wallet=${addr}`,
-          { cache: "no-store" }
+          `https://monad-games-id-site.vercel.app/api/check-wallet?wallet=${addr}`
         );
         const d = await r.json();
         const username = d?.user?.username || null;
@@ -125,7 +116,8 @@ export default function RequireMGID({ children }) {
             You must sign in with <b>Monad Games ID</b> to play and submit scores.
           </p>
           <div className="pt-2">
-            <button className="btn btn-primary w-full" onClick={openMGIDModal}>
+            {/* >>> AURORA UNGU <<< */}
+            <button className="btn btn-aurora w-full" onClick={openMGIDModal}>
               Sign in with Monad Games ID
             </button>
           </div>
@@ -148,7 +140,7 @@ export default function RequireMGID({ children }) {
           </p>
           <a
             href={mgidRegisterUrl(window.location.href)}
-            className="btn btn-primary w-full text-center block"
+            className="btn btn-aurora w-full text-center block"
           >
             Register Username
           </a>
