@@ -12,10 +12,7 @@ import { addScore, getLeaderboard, getPlayer } from './db.js';
 
 // ----- env -----
 const PORT = process.env.PORT || 3000;
-const ALLOW = (process.env.ALLOW_ORIGIN || '*')
-  .split(',')
-  .map(s => s.trim().replace(/\/+$/, ''))
-  .filter(Boolean);
+const ALLOW = (process.env.ALLOW_ORIGIN || '*').split(',');
 const RPC = process.env.MONAD_TESTNET_RPC_URL || 'https://testnet-rpc.monad.xyz';
 const PK = process.env.SERVER_PRIVATE_KEY; // address ini harus didaftarkan sebagai _game
 const CONTRACT = '0xceCBFF203C8B6044F52CE23D914A1bfD997541A4';
@@ -37,38 +34,9 @@ const ABI = parseAbi([
 
 // ----- app -----
 const app = express();
-app.set('trust proxy', 1);
-
-// Global anti-cache (mobile Safari/Chrome)
-app.use((req, res, next) => {
-  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-  res.set('Pragma', 'no-cache');
-  res.set('Expires', '0');
-  res.set('Surrogate-Control', 'no-store');
-  res.set('Vary', 'Origin');
-  next();
-});
-
 app.use(helmet());
 app.use(express.json());
-
-// CORS dengan normalisasi origin (tanpa trailing slash)
-const corsOptions = {
-  origin(origin, cb) {
-    if (!origin) return cb(null, true);        // curl/postman
-    if (ALLOW.includes('*')) return cb(null, true);
-    const o = origin.replace(/\/+$/, '');
-    const ok = ALLOW.some(a => a === o);
-    cb(ok ? null : new Error('CORS blocked'), ok);
-  },
-  methods: ['GET','POST','OPTIONS'],
-  allowedHeaders: ['Content-Type','Authorization'],
-  credentials: false,
-  maxAge: 86400,
-};
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
-
+app.use(cors({ origin: ALLOW }));
 app.use(morgan('dev'));
 
 const limiter = new RateLimiterMemory({ points: 8, duration: 10 });
@@ -92,7 +60,6 @@ app.get('/health', (req, res) => res.json({ ok: true }));
 
 // Debug signer (cek balance & address yang dipakai)
 app.get('/debug/signer', async (req, res) => {
-  noStore(res);
   try {
     const bal = await publicClient.getBalance({ address: account.address });
     res.json({ address: account.address, balanceWei: bal.toString() });
@@ -103,7 +70,6 @@ app.get('/debug/signer', async (req, res) => {
 
 // Submit score → simpan ke DB → kirim tx on-chain (incremental)
 app.post('/submit-score', async (req, res) => {
-  noStore(res);
   try {
     const { player, username, score } = req.body || {};
     if (!player || typeof score !== 'number' || score <= 0) {
@@ -213,7 +179,6 @@ app.get('/tx/ensure/:hash', async (req, res) => {
       pollingInterval: 800,
     });
 
-    // ambil nonce dari tx untuk konsistensi
     let tx = null;
     try { tx = await publicClient.getTransaction({ hash }); } catch {}
     const nonce = tx ? Number(tx.nonce) : null;
@@ -221,7 +186,6 @@ app.get('/tx/ensure/:hash', async (req, res) => {
     const head = await publicClient.getBlockNumber();
     return res.json({ ...serializeMined(hash, nonce, rcpt, head), explorerUrl });
   } catch (e) {
-    // Timeout atau belum mined → fallback ke status biasa
     try {
       let tx = null;
       try { tx = await publicClient.getTransaction({ hash }); } catch {}
@@ -264,8 +228,14 @@ app.get('/tx/ensure/:hash', async (req, res) => {
   }
 });
 
-// Leaderboard & player stats
-app.get('/leaderboard', (req, res) => { noStore(res); res.json(getLeaderboard(50)); });
-app.get('/player/:addr', (req, res) => { noStore(res); res.json(getPlayer(req.params.addr)); });
+// Leaderboard & player stats (NO CACHE → penting untuk mobile)
+app.get('/leaderboard', (req, res) => {
+  noStore(res);
+  res.json(getLeaderboard(50));
+});
+app.get('/player/:addr', (req, res) => {
+  noStore(res);
+  res.json(getPlayer(req.params.addr));
+});
 
 app.listen(PORT, () => console.log(`Server on :${PORT}`));
