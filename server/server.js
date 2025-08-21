@@ -12,7 +12,9 @@ import { addScore, getLeaderboard, getPlayer } from './db.js';
 
 // ----- env -----
 const PORT = process.env.PORT || 3000;
-const ALLOW = (process.env.ALLOW_ORIGIN || '*').split(',');
+// dukung ALLOW_ORIGINS (comma-separated) atau fallback ke ALLOW_ORIGIN (single)
+const RAW_ALLOW = process.env.ALLOW_ORIGINS || process.env.ALLOW_ORIGIN || '*';
+const ALLOW = RAW_ALLOW.split(',').map(s => s.trim()).filter(Boolean);
 const RPC = process.env.MONAD_TESTNET_RPC_URL || 'https://testnet-rpc.monad.xyz';
 const PK = process.env.SERVER_PRIVATE_KEY; // address ini harus didaftarkan sebagai _game
 const CONTRACT = '0xceCBFF203C8B6044F52CE23D914A1bfD997541A4';
@@ -33,9 +35,48 @@ const ABI = parseAbi([
 
 // ----- app -----
 const app = express();
-app.use(helmet());
+app.set('trust proxy', 1);
+
+// izinkan fetch dari vercel previews (.vercel.app) dan allowlist env
+const allowlist = new Set(ALLOW);
+function isAllowedOrigin(origin) {
+  if (!origin || ALLOW.includes('*')) return true; // izinkan curl/postman atau wildcard
+  try {
+    const url = new URL(origin);
+    const host = url.host; // ex: cyber-runner-x.vercel.app
+    if (allowlist.has(origin)) return true;
+    if (host.endsWith('.vercel.app')) return true; // izinkan semua preview vercel
+  } catch {}
+  return false;
+}
+
+// handle preflight OPTIONS lebih awal agar clear
+app.use((req, res, next) => {
+  if (req.method === 'OPTIONS') {
+    const origin = req.headers.origin;
+    if (isAllowedOrigin(origin)) {
+      res.header('Access-Control-Allow-Origin', origin || '*');
+      res.header('Vary', 'Origin');
+      res.header('Access-Control-Allow-Credentials', 'true');
+      res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
+      res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+      return res.sendStatus(204);
+    }
+    return res.status(403).send('CORS preflight blocked');
+  }
+  next();
+});
+
+// helmet + json + cors dinamis
+app.use(helmet({ crossOriginResourcePolicy: false }));
 app.use(express.json());
-app.use(cors({ origin: ALLOW }));
+app.use(cors({
+  origin: (origin, cb) => {
+    if (isAllowedOrigin(origin)) return cb(null, true);
+    return cb(new Error('Not allowed by CORS'));
+  },
+  credentials: true
+}));
 app.use(morgan('dev'));
 
 const limiter = new RateLimiterMemory({ points: 8, duration: 10 });
