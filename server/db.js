@@ -1,6 +1,8 @@
 // server/db.js - Lowdb (pure JS, no native build)
 // NOTE: lowdb v6 uses JSONPreset (NOT JSONFilePreset)
 import { JSONPreset } from 'lowdb/node';
+import fs from 'fs/promises';
+import path from 'path';
 
 // Struktur data: { scores: [ { player, username, score, at } ] }
 const defaultData = { scores: [] };
@@ -8,7 +10,14 @@ const defaultData = { scores: [] };
 // Path file DB bisa diset via env (opsional)
 const DB_PATH = process.env.DB_PATH || './scores.json';
 
-// Inisialisasi DB (Top-level await OK di Node 23)
+// Pastikan direktori untuk DB_PATH ada (hindari crash ENOENT)
+async function ensureDir(p) {
+  const dir = path.dirname(p);
+  try { await fs.mkdir(dir, { recursive: true }); } catch {}
+}
+await ensureDir(DB_PATH);
+
+// Inisialisasi DB (top-level await OK di Node 20+)
 export const db = await JSONPreset(DB_PATH, defaultData);
 
 /** Tambah skor satu baris */
@@ -17,7 +26,7 @@ export async function addScore({ player, username, score }) {
     player: String(player).toLowerCase(),
     username: username ?? null,
     score: Math.floor(score),
-    at: new Date().toISOString(),
+    at: new Date().toISOString()
   };
   db.data.scores.push(row);
   await db.write();
@@ -34,7 +43,7 @@ export function getLeaderboard(limit = 50) {
         player: key,
         high_score: s.score,
         last_played: s.at,
-        username: s.username,
+        username: s.username
       });
     } else {
       if (s.score > prev.high_score) prev.high_score = s.score;
