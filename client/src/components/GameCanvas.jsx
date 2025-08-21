@@ -30,7 +30,7 @@ export default function GameCanvas({ wrapRef, canvasRef, className = "" }) {
           display: "block",
           width: "100%",
           borderRadius: 12,
-          /* cegah browser gestures → swipe analog super mulus */
+          // cegah browser gestures → swipe analog super mulus
           touchAction: "none",
         }}
       />
