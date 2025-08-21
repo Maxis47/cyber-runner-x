@@ -1,0 +1,36 @@
+/* Global mobile stability */
+html, body {
+  height: 100%;
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+  background: transparent;
+}
+:root { --app-vh: 100dvh; } /* fallback jika script belum jalan */
+
+/* Util: jika butuh 100% tinggi layar aman */
+.vh-screen { min-height: var(--app-vh); }
+
+/* ===== Game Canvas Stabil (tanpa ubah Game.jsx) ===== */
+main {
+  min-height: var(--app-vh);
+}
+
+/* Terapkan ke semua <canvas> di area main:
+   - Mengisi lebar parent (responsive)
+   - Tinggi proporsional (tidak lompat)
+   - Batasi tinggi agar tidak menabrak keyboard / alamat bar */
+main canvas {
+  display: block;
+  width: 100% !important;
+  height: auto !important;              /* jaga aspek internal canvas */
+  max-height: calc(var(--app-vh) - 220px);
+  image-rendering: pixelated;
+}
+
+/* Desktop/tablet bisa lebih tinggi */
+@media (min-width: 1024px) {
+  main canvas { max-height: 640px; }
+}
+
+/* Hindari “font terpotong” pada judul */
+.h-title { line-height: 1.15; }
