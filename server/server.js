@@ -96,6 +96,24 @@ app.post('/submit-score', async (req, res) => {
   }
 });
 
+// ---- helper serialize receipt ----
+function serializeMined(hash, nonce, rcpt, head) {
+  const blockNumber = Number(rcpt.blockNumber);
+  const confirmations = Math.max(1, Number(head - rcpt.blockNumber + 1n));
+  const status = rcpt.status === 'success' ? 1 : 0;
+  const gasUsed = rcpt.gasUsed ? rcpt.gasUsed.toString() : null;
+  return {
+    stage: 'mined',
+    hash,
+    nonce,
+    blockNumber,
+    confirmations,
+    gasUsed,
+    status,
+    head: Number(head),
+  };
+}
+
 // Status tx detail (queued → pending → mined)
 app.get('/tx/:hash', async (req, res) => {
   noStore(res);
@@ -103,11 +121,9 @@ app.get('/tx/:hash', async (req, res) => {
     const { hash } = req.params;
     const explorerUrl = EXPLORER_TX_PREFIX ? `${EXPLORER_TX_PREFIX}${hash}` : undefined;
 
-    // 1) coba ambil tx (bisa kasih nonce meski belum mined)
     let tx = null;
     try { tx = await publicClient.getTransaction({ hash }); } catch {}
 
-    // 2) kalau tx belum ada di node sama sekali → queued
     if (!tx) {
       const head = await publicClient.getBlockNumber();
       return res.json({
@@ -125,7 +141,6 @@ app.get('/tx/:hash', async (req, res) => {
 
     const nonce = Number(tx.nonce);
 
-    // 3) coba receipt (kalau belum ada → pending)
     let rcpt = null;
     try { rcpt = await publicClient.getTransactionReceipt({ hash }); } catch {}
 
@@ -144,26 +159,74 @@ app.get('/tx/:hash', async (req, res) => {
       });
     }
 
-    // 4) mined → hitung confirmations & detail
     const head = await publicClient.getBlockNumber();
-    const blockNumber = Number(rcpt.blockNumber);
-    const confirmations = Math.max(1, Number(head - rcpt.blockNumber + 1n));
-    const status = rcpt.status === 'success' ? 1 : 0;
-    const gasUsed = rcpt.gasUsed ? rcpt.gasUsed.toString() : null;
-
-    return res.json({
-      stage: 'mined',
-      hash,
-      nonce,
-      blockNumber,
-      confirmations,
-      gasUsed,
-      status,
-      head: Number(head),
-      explorerUrl
-    });
+    return res.json({ ...serializeMined(hash, nonce, rcpt, head), explorerUrl });
   } catch (e) {
     res.status(500).json({ stage: 'error', error: e.message });
+  }
+});
+
+// Fast ensure: tunggu sampai mined (maks 12s), langsung balikin detail
+app.get('/tx/ensure/:hash', async (req, res) => {
+  noStore(res);
+  const { hash } = req.params;
+  const explorerUrl = EXPLORER_TX_PREFIX ? `${EXPLORER_TX_PREFIX}${hash}` : undefined;
+
+  try {
+    const rcpt = await publicClient.waitForTransactionReceipt({
+      hash,
+      timeout: 12_000,          // 12 detik
+      pollingInterval: 800,     // sejalan dgn FE
+    });
+
+    // ambil nonce dari tx untuk konsistensi
+    let tx = null;
+    try { tx = await publicClient.getTransaction({ hash }); } catch {}
+    const nonce = tx ? Number(tx.nonce) : null;
+
+    const head = await publicClient.getBlockNumber();
+    return res.json({ ...serializeMined(hash, nonce, rcpt, head), explorerUrl });
+  } catch (e) {
+    // Timeout atau belum mined → fallback ke status biasa
+    try {
+      let tx = null;
+      try { tx = await publicClient.getTransaction({ hash }); } catch {}
+      if (!tx) {
+        const head = await publicClient.getBlockNumber();
+        return res.json({
+          stage: 'queued',
+          hash,
+          nonce: null,
+          blockNumber: null,
+          confirmations: 0,
+          gasUsed: null,
+          status: null,
+          head: Number(head),
+          explorerUrl
+        });
+      }
+      const nonce = Number(tx.nonce);
+      let rcpt = null;
+      try { rcpt = await publicClient.getTransactionReceipt({ hash }); } catch {}
+      if (!rcpt) {
+        const head = await publicClient.getBlockNumber();
+        return res.json({
+          stage: 'pending',
+          hash,
+          nonce,
+          blockNumber: null,
+          confirmations: 0,
+          gasUsed: null,
+          status: null,
+          head: Number(head),
+          explorerUrl
+        });
+      }
+      const head = await publicClient.getBlockNumber();
+      return res.json({ ...serializeMined(hash, nonce, rcpt, head), explorerUrl });
+    } catch (err) {
+      return res.status(500).json({ stage: 'error', error: err.message, explorerUrl });
+    }
   }
 });
 
