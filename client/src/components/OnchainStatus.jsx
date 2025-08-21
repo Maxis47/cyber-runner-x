@@ -1,19 +1,18 @@
-// client/src/components/OnchainStatus.jsx
 import React, { useEffect, useMemo, useRef, useState } from "react";
 
 export default function OnchainStatus({ state }) {
   const s = state || {};
 
   // ====== LIVE POLLING (mandiri) ======
-  // Kalau ada s.hash tapi data belum lengkap, kita poll langsung ke RPC.
-  const RPC = import.meta.env.VITE_MONAD_RPC_URL || "";
+  // Gunakan default RPC kalau env kosong → jalan di semua device
+  const RPC = import.meta.env.VITE_MONAD_RPC_URL || "https://testnet-rpc.monad.xyz";
   const [live, setLive] = useState(null); // { stage, blockNumber, confirmations, gasUsed, status, head, nonce }
   const stopRef = useRef(false);
   const hash = s.hash || null;
 
   // helper JSON-RPC
   async function rpcCall(method, params = []) {
-    if (!RPC) throw new Error("VITE_MONAD_RPC_URL missing");
+    if (!RPC) throw new Error("RPC missing");
     const res = await fetch(RPC, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -29,7 +28,6 @@ export default function OnchainStatus({ state }) {
     try { return Number(BigInt(hex)); } catch { return null; }
   };
 
-  // normalisasi hasil RPC
   function normalizeFromRPC(h, tx, rcpt, headHex) {
     const head = headHex ? hexToNum(headHex) : null;
     let stage = "pending";
@@ -54,18 +52,15 @@ export default function OnchainStatus({ state }) {
     return { stage, hash: h, blockNumber, confirmations, gasUsed, status, head, nonce };
   }
 
-  // kapan perlu polling?
   const needLive = useMemo(() => {
     if (!hash) return false;
     const stage = s.stage || "pending";
-    // kalau belum mined/failed → kita bantu polling
     return !(stage === "mined" || stage === "failed");
   }, [hash, s.stage]);
 
   useEffect(() => {
     stopRef.current = false;
     setLive(null);
-
     if (!hash || !needLive) return;
     let timer;
 
@@ -86,17 +81,15 @@ export default function OnchainStatus({ state }) {
       } catch {
         // diamkan; coba lagi
       }
-      if (!stopRef.current) timer = setTimeout(tick, 800);
+      if (!stopRef.current) timer = setTimeout(tick, 900);
     }
 
     tick();
     return () => { stopRef.current = true; clearTimeout(timer); };
-  }, [hash, needLive, /* RPC url change */ RPC]);
+  }, [hash, needLive, RPC]);
 
-  // gabungkan sumber data: live override s (tanpa ubah UI)
   const merged = useMemo(() => ({ ...(s || {}), ...(live || {}) }), [s, live]);
 
-  // ===== Normalisasi & sinkronisasi nilai untuk UI =====
   const blockNumber =
     (merged.stage === "mined" || merged.stage === "failed") && merged.blockNumber != null && Number(merged.blockNumber) > 0
       ? Number(merged.blockNumber)
@@ -127,29 +120,7 @@ export default function OnchainStatus({ state }) {
   const stageNorm =
     merged.stage === "mined" && merged.status === 0 ? "failed" : merged.stage || "idle";
 
-  // ===== Normalisasi explorer URL (hindari /tx/tx/<hash>) =====
-  const explorerUrl = useMemo(() => {
-    const raw = merged.explorerUrl || "";
-    const prefix = (import.meta.env.VITE_EXPLORER_TX_PREFIX || "https://testnet.monadexplorer.com/tx/")
-      .replace(/\/+$/, "/"); // pastikan hanya 1 slash di akhir
-
-    // Jika server sudah kasih URL → pakai & rapikan
-    if (raw) {
-      let u = String(raw);
-      // rapikan '.../tx/tx/...'
-      u = u.replace(/\/tx\/+tx\//, "/tx/");
-      // rapikan '//' ganda kecuali setelah 'http(s):'
-      u = u.replace(/(?<!:)\/{2,}/g, "/");
-      // jika hash belum muncul & url berakhir di /tx atau /tx/ → tambah hash
-      if (hash && !u.toLowerCase().includes(hash.toLowerCase())) {
-        if (/\/tx\/?$/.test(u)) u = `${u.replace(/\/+$/, "/")}${hash}`;
-      }
-      return u;
-    }
-
-    // Fallback: bentuk dari prefix FE
-    return hash ? `${prefix}${hash}` : null;
-  }, [merged.explorerUrl, hash]);
+  const explorerUrl = merged.explorerUrl || null;
 
   const badge = (txt, cls) => (
     <span className={`px-2 py-0.5 rounded-full text-[11px] ${cls}`}>{txt}</span>
