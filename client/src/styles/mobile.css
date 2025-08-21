@@ -8,21 +8,18 @@ html, body {
   background: transparent;
 }
 
-/* Tinggi viewport aman; nilai ini di-set dari index.html script */
+/* Tinggi viewport aman; di-set dari index.html */
 :root { --app-vh: 100dvh; }
-
-/* Opsional util: kalau butuh full-viewport di suatu wrapper */
 .vh-screen { min-height: var(--app-vh); }
 
 /* =========================
    HANYA area game (scoped)
    ========================= */
-/* Tambahkan className="game-wrap" pada container game-mu.
-   Tidak perlu mengubah UI lain. */
+/* Tambahkan via GameCanvas: className="game-wrap" */
 .game-wrap {
   width: 100%;
-  max-width: 520px;        /* batas lebar di desktop/tablet */
-  aspect-ratio: 9 / 16;    /* kunci rasio; ubah jika game pakai rasio lain */
+  max-width: 520px;        /* batas lebar aman */
+  aspect-ratio: 9 / 16;    /* kunci rasio */
   position: relative;
   margin: 0 auto;
   border-radius: 18px;
@@ -34,7 +31,7 @@ html, body {
   box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06), 0 20px 60px rgba(0,0,0,0.4);
 }
 
-/* Semua canvas di DALAM area .game-wrap mengikuti parent, tidak “lompat” */
+/* Canvas selalu mengisi parent */
 .game-wrap canvas {
   position: absolute !important;
   inset: 0 !important;
@@ -44,10 +41,10 @@ html, body {
   image-rendering: pixelated;
 }
 
-/* Tablet/desktop boleh sedikit lebih lebar */
+/* Tablet/desktop */
 @media (min-width: 1024px) {
   .game-wrap { max-width: 560px; }
 }
 
-/* Judul-judul supaya tidak terpotong */
+/* Heading aman di semua device */
 .h-title { line-height: 1.15; }
