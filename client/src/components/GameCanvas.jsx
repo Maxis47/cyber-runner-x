@@ -1,3 +1,4 @@
+// client/src/components/GameCanvas.jsx
 import React from "react";
 
 /**
@@ -16,23 +17,26 @@ export default function GameCanvas({ wrapRef, canvasRef, className = "" }) {
          shadow-[0_0_80px_rgba(0,0,0,0.25)]
          flex items-center justify-center ${className}`
       }
+      /* Stabilizer layout:
+         - overflow:hidden → cegah kanvas “menyundul” panel lain
+         - isolation & zIndex → bikin stacking context sendiri
+         - maxHeight clamp → jaga agar tinggi kanvas tidak kebablasan di desktop
+      */
       style={{
         marginLeft: "auto",
         marginRight: "auto",
-        /* Batasin lebar di desktop tanpa ubah format/UI */
-        maxWidth: "min(92vw, 760px)",
-        /* kunci tinggi relatif ke viewport yang beku → tidak “zoomed” saat scroll */
-        height: "auto",
-        maxHeight: "calc(var(--app-vh, 100svh) - 24px)",
-        touchAction: "manipulation",
-        overscrollBehavior: "contain",
-        contain: "layout size",
+        overflow: "hidden",
+        isolation: "isolate",
+        position: "relative",
+        zIndex: 0,
+        // ruang cadangan bawah untuk toolbar/panel; diubah via CSS var di index.css
+        maxHeight: "min(86svh, calc(100svh - var(--canvas-reserve, 260px)))",
+        aspectRatio: "9 / 16", // guard bila JS resize belum jalan sesaat
       }}
     >
       <canvas
         ref={canvasRef}
         onContextMenu={(e) => e.preventDefault()}
-        draggable={false}
         style={{
           display: "block",
           width: "100%",
