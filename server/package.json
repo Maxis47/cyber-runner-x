@@ -1,10 +1,15 @@
 {
   "name": "cyber-runner-x-server",
-  "version": "1.2.1",
+  "version": "1.2.2",
+  "private": true,
   "type": "module",
+  "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js"
+  },
+  "engines": {
+    "node": "20.x"
   },
   "dependencies": {
     "cors": "^2.8.5",
