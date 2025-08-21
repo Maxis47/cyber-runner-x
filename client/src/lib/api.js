@@ -25,22 +25,22 @@ export async function submitScore(payload) {
 }
 
 export async function fetchLeaderboard() {
-  const r = await withTimeout(fetch(`${BASE}/leaderboard`, { mode: 'cors', cache: 'no-store' }), 12000);
+  const r = await withTimeout(fetch(`${BASE}/leaderboard`, { mode:'cors', cache:'no-store' }), 12000);
   return r.json();
 }
 
 export async function fetchPlayer(a) {
-  const r = await withTimeout(fetch(`${BASE}/player/${a}`, { mode: 'cors', cache: 'no-store' }), 12000);
+  const r = await withTimeout(fetch(`${BASE}/player/${a}`, { mode:'cors', cache:'no-store' }), 12000);
   return r.json();
 }
 
 export async function fetchUsername(a) {
-  const r = await withTimeout(fetch(`https://monad-games-id-site.vercel.app/api/check-wallet?wallet=${a}`, { cache: 'no-store' }), 12000);
+  const r = await withTimeout(fetch(`https://monad-games-id-site.vercel.app/api/check-wallet?wallet=${a}`, { cache:'no-store' }), 12000);
   return r.json();
 }
 
-// penting: pakai endpoint /tx/ensure untuk cepat/akurat
+// pakai endpoint ensure biar status cepat terisi di HP
 export async function getTxStatus(hash) {
-  const r = await withTimeout(fetch(`${BASE}/tx/ensure/${hash}`, { mode: 'cors', cache: 'no-store' }), 15000);
+  const r = await withTimeout(fetch(`${BASE}/tx/ensure/${hash}`, { mode:'cors', cache:'no-store' }), 15000);
   return r.json();
 }
