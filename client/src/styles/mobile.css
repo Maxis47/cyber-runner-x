@@ -1,36 +1,53 @@
-/* Global mobile stability */
+/* =========================
+   Mobile stability (scoped)
+   ========================= */
 html, body {
   height: 100%;
   overscroll-behavior: none;
   -webkit-tap-highlight-color: transparent;
   background: transparent;
 }
-:root { --app-vh: 100dvh; } /* fallback jika script belum jalan */
 
-/* Util: jika butuh 100% tinggi layar aman */
+/* Tinggi viewport aman; nilai ini di-set dari index.html script */
+:root { --app-vh: 100dvh; }
+
+/* Opsional util: kalau butuh full-viewport di suatu wrapper */
 .vh-screen { min-height: var(--app-vh); }
 
-/* ===== Game Canvas Stabil (tanpa ubah Game.jsx) ===== */
-main {
-  min-height: var(--app-vh);
+/* =========================
+   HANYA area game (scoped)
+   ========================= */
+/* Tambahkan className="game-wrap" pada container game-mu.
+   Tidak perlu mengubah UI lain. */
+.game-wrap {
+  width: 100%;
+  max-width: 520px;        /* batas lebar di desktop/tablet */
+  aspect-ratio: 9 / 16;    /* kunci rasio; ubah jika game pakai rasio lain */
+  position: relative;
+  margin: 0 auto;
+  border-radius: 18px;
+  overflow: hidden;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  background: radial-gradient(100% 100% at 50% 0%, rgba(255,255,255,0.06), rgba(0,0,0,0.2));
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06), 0 20px 60px rgba(0,0,0,0.4);
 }
 
-/* Terapkan ke semua <canvas> di area main:
-   - Mengisi lebar parent (responsive)
-   - Tinggi proporsional (tidak lompat)
-   - Batasi tinggi agar tidak menabrak keyboard / alamat bar */
-main canvas {
-  display: block;
+/* Semua canvas di DALAM area .game-wrap mengikuti parent, tidak “lompat” */
+.game-wrap canvas {
+  position: absolute !important;
+  inset: 0 !important;
   width: 100% !important;
-  height: auto !important;              /* jaga aspek internal canvas */
-  max-height: calc(var(--app-vh) - 220px);
+  height: 100% !important;
+  display: block;
   image-rendering: pixelated;
 }
 
-/* Desktop/tablet bisa lebih tinggi */
+/* Tablet/desktop boleh sedikit lebih lebar */
 @media (min-width: 1024px) {
-  main canvas { max-height: 640px; }
+  .game-wrap { max-width: 560px; }
 }
 
-/* Hindari “font terpotong” pada judul */
+/* Judul-judul supaya tidak terpotong */
 .h-title { line-height: 1.15; }
