@@ -17,21 +17,22 @@ export default function GameCanvas({ wrapRef, canvasRef, className = "" }) {
          shadow-[0_0_80px_rgba(0,0,0,0.25)]
          flex items-center justify-center ${className}`
       }
-      /* Stabilizer layout:
-         - overflow:hidden → cegah kanvas “menyundul” panel lain
-         - isolation & zIndex → bikin stacking context sendiri
-         - maxHeight clamp → jaga agar tinggi kanvas tidak kebablasan di desktop
+      /* Stabilizer & force portrait:
+         - height ditetapkan → width mengikuti via aspect-ratio (selalu 9:16)
+         - width:auto override w-full agar patuh aspect-ratio
+         - overflow:hidden + isolation mencegah overlap dengan panel lain
       */
       style={{
         marginLeft: "auto",
         marginRight: "auto",
+        width: "auto",
+        height: "min(86svh, calc(100svh - var(--canvas-reserve, 280px)))",
+        maxWidth: "100%",
+        aspectRatio: "9 / 16",
         overflow: "hidden",
         isolation: "isolate",
         position: "relative",
         zIndex: 0,
-        // ruang cadangan bawah untuk toolbar/panel; diubah via CSS var di index.css
-        maxHeight: "min(86svh, calc(100svh - var(--canvas-reserve, 260px)))",
-        aspectRatio: "9 / 16", // guard bila JS resize belum jalan sesaat
       }}
     >
       <canvas
