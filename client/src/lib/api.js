@@ -1,68 +1,40 @@
 // client/src/lib/api.js
 const BASE = import.meta.env.VITE_API_URL;
 
-// helper: fetch dengan timeout + no-store + cache-buster
-async function request(url, options = {}, { timeout = 8000, retries = 1 } = {}) {
-  const ac = new AbortController();
-  const t = setTimeout(() => ac.abort(), timeout);
-
-  // cache buster untuk CDN/HP
-  const sep = url.includes('?') ? '&' : '?';
-  const finalUrl = `${url}${sep}t=${Date.now()}`;
-
-  try {
-    const res = await fetch(finalUrl, {
-      method: 'GET',
-      mode: 'cors',
-      cache: 'no-store',
-      referrerPolicy: 'no-referrer',
-      credentials: 'omit',
-      keepalive: true,
-      ...options,
-      signal: ac.signal,
-      headers: {
-        'Accept': 'application/json',
-        ...(options.headers || {}),
-      },
-    });
-    clearTimeout(t);
-    if (!res.ok) {
-      const text = await res.text().catch(() => '');
-      throw new Error(text || `HTTP ${res.status}`);
-    }
-    return res.json();
-  } catch (err) {
-    clearTimeout(t);
-    if (retries > 0) {
-      await new Promise(r => setTimeout(r, 400));
-      return request(url, options, { timeout, retries: retries - 1 });
-    }
-    throw err;
-  }
-}
+const bust = () => `t=${Date.now()}`;
+const getOpts = { method: 'GET', cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } };
 
 export async function submitScore({ player, username, score }) {
-  return request(`${BASE}/submit-score`, {
+  const res = await fetch(`${BASE}/submit-score?${bust()}`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' },
     body: JSON.stringify({ player, username, score }),
-  }, { timeout: 10000, retries: 1 }); // submit boleh sedikit lebih lama
+    keepalive: true,
+  });
+  if (!res.ok) throw new Error(await res.text().catch(()=>'submit failed'));
+  return res.json(); // { ok, tx, explorerUrl }
 }
 
 export async function fetchLeaderboard() {
-  return request(`${BASE}/leaderboard`, {}, { timeout: 7000, retries: 1 });
+  const r = await fetch(`${BASE}/leaderboard?${bust()}`, getOpts);
+  if (!r.ok) throw new Error('leaderboard fetch failed');
+  return r.json();
 }
 
-export async function fetchPlayer(addr) {
-  return request(`${BASE}/player/${addr}`, {}, { timeout: 7000, retries: 1 });
+export async function fetchPlayer(a) {
+  const r = await fetch(`${BASE}/player/${a}?${bust()}`, getOpts);
+  if (!r.ok) throw new Error('player fetch failed');
+  return r.json();
 }
 
-export async function fetchUsername(addr) {
-  // service pihak ketiga juga dipaksa no-store + cache-buster
-  const url = `https://monad-games-id-site.vercel.app/api/check-wallet?wallet=${addr}`;
-  return request(url, {}, { timeout: 8000, retries: 1 });
+export async function fetchUsername(a) {
+  const r = await fetch(`https://monad-games-id-site.vercel.app/api/check-wallet?wallet=${a}&${bust()}`, getOpts);
+  if (!r.ok) throw new Error('username fetch failed');
+  return r.json();
 }
 
 export async function getTxStatus(hash) {
-  return request(`${BASE}/tx/${hash}`, {}, { timeout: 7000, retries: 2 });
+  const r = await fetch(`${BASE}/tx/${hash}?${bust()}`, getOpts);
+  if (!r.ok) throw new Error('tx status fetch failed');
+  return r.json();
 }
