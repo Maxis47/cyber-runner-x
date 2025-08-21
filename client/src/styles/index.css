@@ -4,13 +4,13 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Kartu & metric (tetap seperti punyamu) */
+/* Komponen kartu/metric — biarkan seperti sebelumnya */
 .card { @apply rounded-2xl border border-white/10 bg-black/20 p-4; }
 .card-tight { @apply rounded-xl border border-white/10 bg-black/20 px-3 py-2; }
 .metric { @apply text-[11px] uppercase tracking-wide text-zinc-400; }
 .metric-xl { @apply text-2xl font-bold; }
 
-/* Aurora premium sinkron */
+/* Aurora premium yang konsisten */
 .aurora-bg {
   position: relative;
   background:
@@ -20,5 +20,5 @@
     linear-gradient(180deg, #0B0B12 0%, #0E0E19 100%);
 }
 
-/* Judul tidak terpotong */
+/* Pastikan heading tidak terpotong */
 .h-title { line-height: 1.15; }
