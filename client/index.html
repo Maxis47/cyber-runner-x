@@ -1,29 +1,61 @@
+<!-- client/index.html -->
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <!-- Kunci scale & stabilkan area aman (notch) -->
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- Kunci viewport: cegah zoom, aman untuk notch (viewport-fit=cover) -->
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+      content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no"
     />
-    <meta name="theme-color" content="#0b0b12" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="theme-color" content="#0B0B12" />
     <title>Cyber Runner X</title>
+
+    <style>
+      /* Stabilkan tinggi & sentuh */
+      html, body, #root { height: 100%; min-height: 100%; }
+      * { -webkit-tap-highlight-color: transparent; }
+      body { margin: 0; background: #0B0B12; overscroll-behavior-y: none; }
+    </style>
+
     <script>
-      // 100vh stabil di mobile (address bar show/hide)
-      function setVH() {
-        var h =
-          (window.visualViewport && window.visualViewport.height) ||
-          window.innerHeight ||
-          document.documentElement.clientHeight ||
-          800;
-        document.documentElement.style.setProperty("--app-vh", h + "px");
-      }
-      window.addEventListener("resize", setVH, { passive: true });
-      if (window.visualViewport) {
-        window.visualViewport.addEventListener("resize", setVH, { passive: true });
-      }
-      setVH();
+      // --- Mobile hardening: cegah pinch & double-tap zoom (Android & iOS) ---
+      (function () {
+        const prevent = e => { e.preventDefault(); };
+        // Pinch (iOS Safari event)
+        document.addEventListener('gesturestart', prevent, { passive: false });
+        // Zoom via Ctrl+Wheel (Android/desktop)
+        document.addEventListener('wheel', e => { if (e.ctrlKey) e.preventDefault(); }, { passive: false });
+        // Double-tap zoom
+        let lastTouch = 0;
+        document.addEventListener('touchend', e => {
+          const now = Date.now();
+          if (now - lastTouch < 300) e.preventDefault();
+          lastTouch = now;
+        }, { passive: false });
+      })();
+
+      // --- iPhone sign-in stuck (popup diblokir / 3rd-party cookies) ---
+      // Paksa semua window.open ke URL "auth/login/wallet/privy" menjadi FULL-PAGE REDIRECT di iOS.
+      (function () {
+        const ua = navigator.userAgent || '';
+        const isIOS = /iP(hone|od|ad)/.test(ua);
+        if (!isIOS) return;
+
+        const originalOpen = window.open;
+        window.open = function (url, name, specs) {
+          try {
+            if (typeof url === 'string' && /(privy|auth|login|connect|wallet)/i.test(url)) {
+              // Redirect penuh: pasti lolos ITP & popup blocker
+              location.href = url;
+              return null;
+            }
+          } catch (_) {}
+          return originalOpen ? originalOpen.apply(window, arguments) : null;
+        };
+      })();
     </script>
   </head>
   <body>
