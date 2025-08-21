@@ -1,36 +1,78 @@
-const API = import.meta.env.VITE_API_URL;
+// client/src/lib/tx.js
+// Watcher status transaksi: cepat, no-cache, sinkron dgn OnchainStatus.jsx
 
-export async function getTxStatus(hash, { wait = false, timeoutMs = 20000 } = {}) {
-  const url = new URL(`${API}/tx/${hash}`);
-  if (wait) url.searchParams.set('wait', '1');
-  if (timeoutMs) url.searchParams.set('timeout_ms', String(timeoutMs));
-  const r = await fetch(url, { cache: 'no-store' });
-  return r.json();
+const API = import.meta.env.VITE_API_URL || '';
+
+function buildExplorer(hash, fromServer) {
+  if (fromServer) return fromServer;
+  const prefix = import.meta.env.VITE_EXPLORER_TX_PREFIX || '';
+  return prefix ? `${prefix}${hash}` : undefined;
 }
 
-export function streamTxStatus(hash, onUpdate, { timeoutMs = 30000, intervalMs = 1000 } = {}) {
-  const sseUrl = new URL(`${API}/tx/stream/${hash}`);
-  sseUrl.searchParams.set('timeout_ms', String(timeoutMs));
+/**
+ * Mulai memantau transaksi.
+ * @param {string} hash - tx hash
+ * @param {(updater: (prev)=>any)|Object} setState - setState dari React (fungsi)
+ * @returns {() => void} stop function
+ */
+export function startTxWatcher(hash, setState) {
+  if (!hash || typeof setState !== 'function') return () => {};
 
-  if ('EventSource' in window) {
-    const es = new EventSource(sseUrl);
-    const timer = setTimeout(() => es.close(), timeoutMs + 2000);
-    es.onmessage = ev => { try { onUpdate(JSON.parse(ev.data)); } catch {} };
-    es.onerror = () => es.close();
-    return () => { clearTimeout(timer); es.close(); };
+  // set awal (pending)
+  setState((prev) => ({
+    ...(prev || {}),
+    stage: 'pending',
+    hash,
+    blockNumber: null,
+    nonce: null,
+    confirmations: 0,
+    gasUsed: null,
+    status: null,
+    explorerUrl: buildExplorer(hash),
+  }));
+
+  let stopped = false;
+
+  async function tick() {
+    if (stopped) return;
+    try {
+      const url = `${API}/tx/${hash}?ts=${Date.now()}`;
+      const r = await fetch(url, { cache: 'no-store' });
+      const d = await r.json();
+
+      // normalisasi agar OnchainStatus.jsx langsung bisa render
+      const next = {
+        stage: d.stage || 'pending',
+        hash: d.hash || hash,
+        blockNumber: d.blockNumber ?? null,
+        nonce: d.nonce ?? null,
+        confirmations: d.confirmations ?? 0,
+        gasUsed: d.gasUsed ?? null,
+        status: d.status ?? null,
+        head: d.head ?? null,
+        explorerUrl: buildExplorer(hash, d.explorerUrl),
+        error: d.error || null,
+      };
+
+      setState((prev) => ({ ...(prev || {}), ...next }));
+
+      // stop setelah mined / failed
+      if (next.stage === 'mined' || next.stage === 'failed') {
+        stopped = true;
+        return;
+      }
+    } catch (e) {
+      // Biarkan watcher lanjut; jangan stop
+      setState((prev) => ({ ...(prev || {}), error: e.message }));
+    }
+    if (!stopped) {
+      setTimeout(tick, 800); // tempo cepat tapi hemat
+    }
   }
 
-  let alive = true;
-  (async function loop() {
-    const t0 = Date.now();
-    while (alive && Date.now() - t0 < timeoutMs) {
-      try {
-        const s = await getTxStatus(hash);
-        onUpdate(s);
-        if (s.stage === 'mined' || s.stage === 'error') break;
-      } catch {}
-      await new Promise(r => setTimeout(r, intervalMs));
-    }
-  })();
-  return () => { alive = false; };
+  // mulai
+  tick();
+
+  // stop fn
+  return () => { stopped = true; };
 }
