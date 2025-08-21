@@ -1,30 +1,15 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
-    <meta name="theme-color" content="#0b0b12" />
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="color-scheme" content="dark light" />
     <title>Cyber Runner X</title>
-    <script>
-      // Kunci tinggi viewport mobile (hindari kanvas nyusut saat address bar muncul)
-      (function () {
-        function setVH() {
-          try {
-            var v = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-            if (v) document.documentElement.style.setProperty('--app-vh', v + 'px');
-          } catch {}
-        }
-        setVH();
-        window.addEventListener('resize', setVH);
-        if (window.visualViewport) {
-          window.visualViewport.addEventListener('resize', setVH);
-          window.visualViewport.addEventListener('scroll', setVH);
-        }
-      })();
-    </script>
   </head>
-  <body class="aurora-bg">
+  <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
