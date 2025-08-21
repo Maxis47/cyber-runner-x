@@ -1,23 +1,25 @@
-// Robust base URL resolver + no-store caching → data muncul di semua device
+// Base URL yang robust + no-store agar data muncul di semua device
 const rawBase =
   import.meta.env.VITE_API_URL ||
-  import.meta.env.VITE_API_BASE || // fallback kalau env kamu pakai nama ini
+  import.meta.env.VITE_API_BASE ||      // fallback env lama
+  (typeof window !== "undefined" ? window.__API_BASE__ : "") || // fallback via HTML
   "";
 
+// normalisasi ke https://host tanpa slash akhir
 function normalizeBase(u) {
   if (!u) return "";
-  const trimmed = u.replace(/\s+/g, "");
-  if (/^https?:\/\//i.test(trimmed)) return trimmed.replace(/\/+$/, "");
-  // kalau user isi domain tanpa skema di Vercel (mis: cyber-runner-x-production.up.railway.app)
-  return `https://${trimmed}`.replace(/\/+$/, "");
+  const trimmed = String(u).trim().replace(/\s+/g, "");
+  const withProto = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+  return withProto.replace(/\/+$/, "");
 }
 
 export const BASE = normalizeBase(rawBase);
 
-// helper fetch JSON
+// helper fetch JSON (selalu no-store)
 async function j(url, opt = {}) {
   const res = await fetch(url, {
     cache: "no-store",
+    referrerPolicy: "no-referrer",
     ...opt,
     headers: {
       "Content-Type": "application/json",
@@ -32,9 +34,9 @@ async function j(url, opt = {}) {
   return res.json();
 }
 
-// API utama (server Railway)
+// ===== APIs =====
 export async function submitScore({ player, username, score }) {
-  if (!BASE) throw new Error("VITE_API_URL is not set");
+  if (!BASE) throw new Error("VITE_API_URL (atau __API_BASE__) belum diset");
   return j(`${BASE}/submit-score`, {
     method: "POST",
     body: JSON.stringify({ player, username, score }),
@@ -42,12 +44,12 @@ export async function submitScore({ player, username, score }) {
 }
 
 export async function fetchLeaderboard() {
-  if (!BASE) throw new Error("VITE_API_URL is not set");
+  if (!BASE) throw new Error("VITE_API_URL (atau __API_BASE__) belum diset");
   return j(`${BASE}/leaderboard`);
 }
 
 export async function fetchPlayer(a) {
-  if (!BASE) throw new Error("VITE_API_URL is not set");
+  if (!BASE) throw new Error("VITE_API_URL (atau __API_BASE__) belum diset");
   return j(`${BASE}/player/${a}`);
 }
 
@@ -58,6 +60,6 @@ export async function fetchUsername(a) {
 
 // Tx status dari server (no-store)
 export async function getTxStatus(hash) {
-  if (!BASE) throw new Error("VITE_API_URL is not set");
+  if (!BASE) throw new Error("VITE_API_URL (atau __API_BASE__) belum diset");
   return j(`${BASE}/tx/${hash}`);
 }
