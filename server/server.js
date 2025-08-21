@@ -12,17 +12,15 @@ import { addScore, getLeaderboard, getPlayer } from './db.js';
 
 // ----- env -----
 const PORT = process.env.PORT || 3000;
-const ALLOW = (process.env.ALLOW_ORIGIN || '*').split(',');
 const RPC = process.env.MONAD_TESTNET_RPC_URL || 'https://testnet-rpc.monad.xyz';
 const PK = process.env.SERVER_PRIVATE_KEY; // address ini harus didaftarkan sebagai _game
 const CONTRACT = '0xceCBFF203C8B6044F52CE23D914A1bfD997541A4';
 const EXPLORER_TX_PREFIX = process.env.EXPLORER_TX_PREFIX || ''; // optional
+const ALLOW_STR = (process.env.ALLOW_ORIGIN || '*').trim(); // contoh: https://cyber-runner-x.vercel.app
+const ALLOW_LIST = ALLOW_STR.split(',').map(s => s.trim()).filter(Boolean);
 
 // ----- chain clients -----
-if (!PK) {
-  console.error('SERVER_PRIVATE_KEY missing in .env');
-  process.exit(1);
-}
+if (!PK) { console.error('SERVER_PRIVATE_KEY missing in .env'); process.exit(1); }
 const account = privateKeyToAccount(PK);
 const publicClient = createPublicClient({ chain: monadTestnet, transport: http(RPC) });
 const walletClient = createWalletClient({ account, chain: monadTestnet, transport: http(RPC) });
@@ -34,32 +32,41 @@ const ABI = parseAbi([
 
 // ----- app -----
 const app = express();
-
-// penting agar req.ip membaca X-Forwarded-For di Railway/Proxy
-app.set('trust proxy', true);
-
 app.use(helmet());
 app.use(express.json());
-app.use(cors({ origin: ALLOW }));
+
+// ===== CORS yang ramah mobile/proxy (termasuk null origin) =====
+const corsOptions = {
+  origin(origin, cb) {
+    if (!origin) return cb(null, true); // mobile webview/curl
+    const norm = origin.replace(/\/+$/, '');
+    const ok = ALLOW_LIST.includes('*') || ALLOW_LIST.some(o => o.replace(/\/+$/, '') === norm);
+    cb(null, ok);
+  },
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: false,
+  maxAge: 86400,
+  optionsSuccessStatus: 204,
+};
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)); // pastikan preflight selalu 204
+
 app.use(morgan('dev'));
 
-// helper no-cache
+// Rate limit HANYA untuk POST submit (jangan blokir OPTIONS/GET)
+const postLimiter = new RateLimiterMemory({ points: 6, duration: 10 });
+async function limitPost(req, res, next) {
+  try { await postLimiter.consume(req.ip); next(); }
+  catch { res.status(429).json({ error: 'Too many requests' }); }
+}
+
+// no-cache helper
 function noStore(res) {
   res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
   res.set('Pragma', 'no-cache');
   res.set('Expires', '0');
 }
-
-// rate limit: fokus hanya untuk operasi tulis (POST submit-score)
-const limiter = new RateLimiterMemory({ points: 15, duration: 10 });
-const getKey = (req) =>
-  (req.headers['x-forwarded-for']?.split(',')[0]?.trim()) || req.ip || 'ip';
-
-// Terapkan limiter HANYA untuk submit-score
-const limitSubmit = async (req, res, next) => {
-  try { await limiter.consume(getKey(req)); next(); }
-  catch { res.status(429).json({ error: 'Too many requests' }); }
-};
 
 app.get('/health', (req, res) => res.json({ ok: true }));
 
@@ -74,8 +81,7 @@ app.get('/debug/signer', async (req, res) => {
 });
 
 // Submit score → simpan ke DB → kirim tx on-chain (incremental)
-app.post('/submit-score', limitSubmit, async (req, res) => {
-  noStore(res);
+app.post('/submit-score', limitPost, async (req, res) => {
   try {
     const { player, username, score } = req.body || {};
     if (!player || typeof score !== 'number' || score <= 0) {
@@ -90,7 +96,7 @@ app.post('/submit-score', limitSubmit, async (req, res) => {
       address: CONTRACT,
       abi: ABI,
       functionName: 'updatePlayerData',
-      args: [player, BigInt(Math.floor(score)), 1n]
+      args: [player, BigInt(Math.floor(score)), 1n],
     });
 
     const explorerUrl = EXPLORER_TX_PREFIX ? `${EXPLORER_TX_PREFIX}${hash}` : undefined;
@@ -133,35 +139,20 @@ app.get('/tx/:hash', async (req, res) => {
     if (!tx) {
       const head = await publicClient.getBlockNumber();
       return res.json({
-        stage: 'queued',
-        hash,
-        nonce: null,
-        blockNumber: null,
-        confirmations: 0,
-        gasUsed: null,
-        status: null,
-        head: Number(head),
-        explorerUrl
+        stage: 'queued', hash, nonce: null, blockNumber: null,
+        confirmations: 0, gasUsed: null, status: null, head: Number(head), explorerUrl
       });
     }
 
     const nonce = Number(tx.nonce);
-
     let rcpt = null;
     try { rcpt = await publicClient.getTransactionReceipt({ hash }); } catch {}
 
     if (!rcpt) {
       const head = await publicClient.getBlockNumber();
       return res.json({
-        stage: 'pending',
-        hash,
-        nonce,
-        blockNumber: null,
-        confirmations: 0,
-        gasUsed: null,
-        status: null,
-        head: Number(head),
-        explorerUrl
+        stage: 'pending', hash, nonce, blockNumber: null,
+        confirmations: 0, gasUsed: null, status: null, head: Number(head), explorerUrl
       });
     }
 
@@ -191,22 +182,16 @@ app.get('/tx/ensure/:hash', async (req, res) => {
 
     const head = await publicClient.getBlockNumber();
     return res.json({ ...serializeMined(hash, nonce, rcpt, head), explorerUrl });
-  } catch (e) {
+  } catch {
+    // fallback ke status biasa
     try {
       let tx = null;
       try { tx = await publicClient.getTransaction({ hash }); } catch {}
       if (!tx) {
         const head = await publicClient.getBlockNumber();
         return res.json({
-          stage: 'queued',
-          hash,
-          nonce: null,
-          blockNumber: null,
-          confirmations: 0,
-          gasUsed: null,
-          status: null,
-          head: Number(head),
-          explorerUrl
+          stage: 'queued', hash, nonce: null, blockNumber: null,
+          confirmations: 0, gasUsed: null, status: null, head: Number(head), explorerUrl
         });
       }
       const nonce = Number(tx.nonce);
@@ -215,15 +200,8 @@ app.get('/tx/ensure/:hash', async (req, res) => {
       if (!rcpt) {
         const head = await publicClient.getBlockNumber();
         return res.json({
-          stage: 'pending',
-          hash,
-          nonce,
-          blockNumber: null,
-          confirmations: 0,
-          gasUsed: null,
-          status: null,
-          head: Number(head),
-          explorerUrl
+          stage: 'pending', hash, nonce, blockNumber: null,
+          confirmations: 0, gasUsed: null, status: null, head: Number(head), explorerUrl
         });
       }
       const head = await publicClient.getBlockNumber();
@@ -234,8 +212,8 @@ app.get('/tx/ensure/:hash', async (req, res) => {
   }
 });
 
-// Leaderboard & player stats (no-cache supaya mobile tidak menahan respons lama)
-app.get('/leaderboard', (req, res) => { noStore(res); return res.json(getLeaderboard(50)); });
-app.get('/player/:addr', (req, res) => { noStore(res); return res.json(getPlayer(req.params.addr)); });
+// Leaderboard & player stats (no-store supaya realtime di HP)
+app.get('/leaderboard', (req, res) => { noStore(res); res.json(getLeaderboard(50)); });
+app.get('/player/:addr', (req, res) => { noStore(res); res.json(getPlayer(req.params.addr)); });
 
 app.listen(PORT, () => console.log(`Server on :${PORT}`));
