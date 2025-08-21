@@ -4,7 +4,7 @@
 
 /* ====== Fondasi stabil & anti autosize ====== */
 :root { color-scheme: dark; }
-/* ➜ ruang cadangan default di bawah kanvas supaya panel tidak ketindih */
+/* ruang cadangan bawah kanvas agar panel tidak saling tindih */
 :root { --canvas-reserve: 280px; }
 
 html, body, #root { height: var(--app-vh, 100svh); min-height: var(--app-vh, 100svh); }
@@ -14,11 +14,9 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 input, select, textarea, button { font-size: 16px; } /* cegah auto-zoom fokus */
 
 @media (max-width: 640px) {
-  /* HP: ruang cadangan sedikit lebih kecil */
   :root { --canvas-reserve: 230px; }
 }
 @media (min-width: 1280px) {
-  /* Desktop lebar: tambah sedikit ruang agar panel kiri/kanan tidak saling tindih */
   :root { --canvas-reserve: 320px; }
 }
 
@@ -60,7 +58,7 @@ body{
 }
 .btn{ @apply rounded-md border border-white/15 px-3 py-1; }
 
-/* ===== Aurora button (global) ===== */
+/* ===== Aurora button (global, termasuk tombol Sign in header/gate) ===== */
 @keyframes auroraMove {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
