@@ -23,9 +23,17 @@ export default function RequireMGID({ children }) {
     try {
       // Prefer direct cross-app if SDK mendukung; fallback ke login() biasa
       if (typeof loginWithCrossAppAccount === "function") {
-        await loginWithCrossAppAccount({ providerAppId: CROSS_APP_ID, createAccount: true });
+        await loginWithCrossAppAccount({
+          providerAppId: CROSS_APP_ID,
+          createAccount: true,
+          // 🔧 PENTING UNTUK MOBILE: pastikan redirect kembali ke app
+          redirectTo: window.location.origin,
+        });
       } else {
-        await login();
+        await login({
+          // 🔧 sama: redirect balik ke app
+          redirectTo: window.location.origin,
+        });
       }
     } catch (e) {
       console.error("MGID login error:", e);
@@ -113,7 +121,7 @@ export default function RequireMGID({ children }) {
             </button>
           </div>
           <div className="text-[11px] text-zinc-500">
-            Make sure pop‑ups are allowed and test in a clean browser profile if the modal doesn’t show.
+            Make sure pop-ups are allowed and test in a clean browser profile if the modal doesn’t show.
           </div>
         </div>
       </div>
