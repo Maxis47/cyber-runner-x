@@ -4,10 +4,26 @@
     <meta charset="utf-8" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+      content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"
     />
-    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="#0b0b12" />
     <title>Cyber Runner X</title>
+    <script>
+      // 100vh yang stabil di mobile
+      function setVH() {
+        var h =
+          (window.visualViewport && window.visualViewport.height) ||
+          window.innerHeight ||
+          document.documentElement.clientHeight ||
+          800;
+        document.documentElement.style.setProperty("--app-vh", h + "px");
+      }
+      window.addEventListener("resize", setVH);
+      if (window.visualViewport) {
+        window.visualViewport.addEventListener("resize", setVH);
+      }
+      setVH();
+    </script>
   </head>
   <body>
     <div id="root"></div>
