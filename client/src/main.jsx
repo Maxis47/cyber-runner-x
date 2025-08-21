@@ -23,7 +23,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         primary: [`privy:${CROSS_APP_ID}`], // cmd8euall0037le0my79qpz42
       },
 
-      // DO NOT set `loginMethods` here; it can override and cause "no login method" error
+      // 🔧 PENTING UNTUK MOBILE:
+      // Pastikan setelah login, user diarahkan kembali ke domain app kamu.
+      redirectTo: window.location.origin,
     }}
   >
     <RouterProvider router={router} />
