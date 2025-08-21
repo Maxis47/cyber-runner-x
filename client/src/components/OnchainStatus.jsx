@@ -8,41 +8,39 @@ export default function OnchainStatus({ state }) {
   // server kirim: { stage, hash, blockNumber, nonce, status, confirmations, gasUsed, head }
   const hash = s.hash || null;
 
-  // block bisa datang sebagai blockNumber / block
-  const block =
-    s.blockNumber != null
+  // HANYA pakai blockNumber dari server; abaikan s.block lama (sering 0)
+  // Jika belum mined → tampilkan "—"
+  const mined = s.stage === "mined" || (s.stage === "pending" && s.status === 1);
+  const blockNumber =
+    mined && s.blockNumber != null && Number(s.blockNumber) > 0
       ? Number(s.blockNumber)
-      : s.block != null
-      ? Number(s.block)
       : null;
 
-  // nonce bisa 0 -> harus tetap tampil
+  // nonce boleh 0 (valid) → tampilkan angka 0 juga
   const nonce =
     s.nonce != null
-      ? (typeof s.nonce === "bigint" ? Number(s.nonce) : s.nonce)
+      ? (typeof s.nonce === "bigint" ? Number(s.nonce) : Number(s.nonce))
       : null;
 
-  // confirmations: pakai yang dari server; kalau null & mined, hitung dari HEAD
+  // Confirmations: pakai dari server jika ada; jika mined & belum ada → hitung dari head
   let confirmations =
-    s.confirmations != null
-      ? Number(s.confirmations)
-      : null;
-  if (confirmations == null && s.stage === "mined" && block != null && s.head != null) {
+    s.confirmations != null ? Number(s.confirmations) : null;
+  if (confirmations == null && mined && blockNumber != null && s.head != null) {
     const headNum = Number(s.head);
-    confirmations = Math.max(1, headNum - Number(block) + 1);
+    confirmations = Math.max(1, headNum - blockNumber + 1);
   }
+  // Jika belum mined → tampilkan "—"
+  if (!mined) confirmations = null;
 
-  // gasUsed bisa string/bignum -> tampilkan apa adanya
+  // Gas Used: tampilkan hanya saat mined & ada nilai > 0
   const gasUsed =
-    s.gasUsed != null
-      ? String(s.gasUsed)
-      : null;
+    mined && s.gasUsed != null && String(s.gasUsed) !== "0" ? String(s.gasUsed) : null;
 
   // stage: jika mined tapi status=0 => failed
   const stageNorm =
     s.stage === "mined" && s.status === 0 ? "failed" : s.stage || "idle";
 
-  // (opsional) explorer url jika sudah disediakan di state
+  // Explorer URL bila ada
   const explorerUrl = s.explorerUrl || null;
 
   const badge = (txt, cls) => (
@@ -67,7 +65,7 @@ export default function OnchainStatus({ state }) {
 
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-xs">
         <Info label="Hash" value={hash ? short(hash) : "—"} link={explorerUrl} />
-        <Info label="Block" value={numOrDash(block)} />
+        <Info label="Block" value={numOrDash(blockNumber)} />
         <Info label="Nonce" value={numOrDash(nonce)} />
         <Info label="Confirmations" value={numOrDash(confirmations)} />
         <Info label="Gas Used" value={gasUsed ?? "—"} />
