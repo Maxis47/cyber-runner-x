@@ -2,7 +2,7 @@
 const rawBase =
   import.meta.env.VITE_API_URL ||
   import.meta.env.VITE_API_BASE ||      // fallback env lama
-  (typeof window !== "undefined" ? window.__API_BASE__ : "") || // fallback via HTML
+  (typeof window !== "undefined" ? window.__API_BASE__ : "") ||
   "";
 
 // normalisasi ke https://host tanpa slash akhir
@@ -25,6 +25,8 @@ async function j(url, opt = {}) {
       "Content-Type": "application/json",
       ...(opt.headers || {}),
     },
+    // Hindari proxy caching agresif di mobile
+    credentials: "omit",
   });
   if (!res.ok) {
     let msg = "";
