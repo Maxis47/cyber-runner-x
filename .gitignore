@@ -3,12 +3,15 @@ node_modules
 server/node_modules
 client/node_modules
 
-# env files
+# env files (jangan ke repo)
 .env
 .env.local
 .env.production
 server/.env
 client/.env
+
+# DB lokal (free plan)
+server/scores.db
 
 # logs & artifacts
 npm-debug.log*

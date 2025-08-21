@@ -8,11 +8,9 @@ import { createPublicClient, createWalletClient, http, parseAbi, defineChain } f
 import { privateKeyToAccount } from 'viem/accounts';
 import { addScore, getLeaderboard, getPlayer } from './db.js';
 
-// ===== Debug boot & guard error =====
 process.on('unhandledRejection', e => console.error('UNHANDLED', e));
 process.on('uncaughtException', e => { console.error('UNCAUGHT', e); process.exit(1); });
 
-// Baca PORT & HOST dari env; default 3000 dan 0.0.0.0
 const PORT = Number(process.env.PORT || 3000);
 const HOST = process.env.HOST || '0.0.0.0';
 
@@ -30,11 +28,12 @@ app.set('trust proxy', 1);
 app.use(helmet({ crossOriginResourcePolicy: false }));
 app.use(express.json());
 
-// ----- CORS preflight aman -----
 function originOk(origin) {
   if (!origin || ALLOW.includes('*') || ALLOW.includes(origin)) return true;
   try { return new URL(origin).host.endsWith('.vercel.app'); } catch { return false; }
 }
+
+// Preflight
 app.use((req, res, next) => {
   if (req.method === 'OPTIONS') {
     const origin = req.headers.origin;
@@ -50,27 +49,27 @@ app.use((req, res, next) => {
   }
   next();
 });
+
 app.use(cors({
   origin: (origin, cb) => cb(null, originOk(origin)),
   credentials: true
 }));
 app.use(morgan('dev'));
 
-// ----- Rate limit ringan -----
 const limiter = new RateLimiterMemory({ points: 8, duration: 10 });
 app.use(async (req, res, next) => {
   try { await limiter.consume(req.ip); next(); }
   catch { res.status(429).json({ error: 'Too many requests' }); }
 });
 
-// ===== /health SELALU hidup =====
+// Health selalu hidup
 app.get('/health', (req, res) => res.json({ ok: true }));
 
-// ===== Inisialisasi chain aman (tidak mematikan server kalau gagal) =====
+// ===== Chain aman
 let publicClient = null, walletClient = null, account = null;
 
 const monadTestnet = defineChain({
-  id: 10143, // sesuaikan bila perlu
+  id: 10143,
   name: 'Monad Testnet',
   nativeCurrency: { name: 'MON', symbol: 'MON', decimals: 18 },
   rpcUrls: { default: { http: [RPC] }, public: { http: [RPC] } }
@@ -92,7 +91,7 @@ const ABI = parseAbi([
   }
 })();
 
-// ===== Routes utama =====
+// Routes
 app.get('/leaderboard', (req, res) => res.json(getLeaderboard(50)));
 app.get('/player/:addr', (req, res) => res.json(getPlayer(req.params.addr)));
 
@@ -106,7 +105,6 @@ app.post('/submit-score', async (req, res) => {
     await addScore({ player, username, score });
 
     if (!walletClient) {
-      // chain belum siap — tetap sukses lokal
       return res.json({ ok: true, tx: null, note: 'saved locally (chain not ready)' });
     }
 
@@ -122,5 +120,4 @@ app.post('/submit-score', async (req, res) => {
   }
 });
 
-// ===== Pastikan bind ke 0.0.0.0:PORT =====
 app.listen(PORT, HOST, () => console.log(`Server on ${HOST}:${PORT}`));
