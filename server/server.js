@@ -34,27 +34,32 @@ const ABI = parseAbi([
 
 // ----- app -----
 const app = express();
+
+// penting agar req.ip membaca X-Forwarded-For di Railway/Proxy
+app.set('trust proxy', true);
+
 app.use(helmet());
 app.use(express.json());
 app.use(cors({ origin: ALLOW }));
 app.use(morgan('dev'));
 
-const limiter = new RateLimiterMemory({ points: 8, duration: 10 });
-app.use(async (req, res, next) => {
-  try {
-    await limiter.consume(req.ip);
-    next();
-  } catch {
-    res.status(429).json({ error: 'Too many requests' });
-  }
-});
-
-// no-cache helper
+// helper no-cache
 function noStore(res) {
   res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
   res.set('Pragma', 'no-cache');
   res.set('Expires', '0');
 }
+
+// rate limit: fokus hanya untuk operasi tulis (POST submit-score)
+const limiter = new RateLimiterMemory({ points: 15, duration: 10 });
+const getKey = (req) =>
+  (req.headers['x-forwarded-for']?.split(',')[0]?.trim()) || req.ip || 'ip';
+
+// Terapkan limiter HANYA untuk submit-score
+const limitSubmit = async (req, res, next) => {
+  try { await limiter.consume(getKey(req)); next(); }
+  catch { res.status(429).json({ error: 'Too many requests' }); }
+};
 
 app.get('/health', (req, res) => res.json({ ok: true }));
 
@@ -69,7 +74,8 @@ app.get('/debug/signer', async (req, res) => {
 });
 
 // Submit score → simpan ke DB → kirim tx on-chain (incremental)
-app.post('/submit-score', async (req, res) => {
+app.post('/submit-score', limitSubmit, async (req, res) => {
+  noStore(res);
   try {
     const { player, username, score } = req.body || {};
     if (!player || typeof score !== 'number' || score <= 0) {
@@ -228,14 +234,8 @@ app.get('/tx/ensure/:hash', async (req, res) => {
   }
 });
 
-// Leaderboard & player stats (NO CACHE → penting untuk mobile)
-app.get('/leaderboard', (req, res) => {
-  noStore(res);
-  res.json(getLeaderboard(50));
-});
-app.get('/player/:addr', (req, res) => {
-  noStore(res);
-  res.json(getPlayer(req.params.addr));
-});
+// Leaderboard & player stats (no-cache supaya mobile tidak menahan respons lama)
+app.get('/leaderboard', (req, res) => { noStore(res); return res.json(getLeaderboard(50)); });
+app.get('/player/:addr', (req, res) => { noStore(res); return res.json(getPlayer(req.params.addr)); });
 
 app.listen(PORT, () => console.log(`Server on :${PORT}`));
