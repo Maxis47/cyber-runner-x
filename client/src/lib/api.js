@@ -1,40 +1,46 @@
-// client/src/lib/api.js
-const BASE = import.meta.env.VITE_API_URL;
+const BASE = (import.meta.env.VITE_API_URL || '').replace(/\/+$/, '');
 
-const bust = () => `t=${Date.now()}`;
-const getOpts = { method: 'GET', cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } };
-
-export async function submitScore({ player, username, score }) {
-  const res = await fetch(`${BASE}/submit-score?${bust()}`, {
+function json(body) {
+  return {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' },
-    body: JSON.stringify({ player, username, score }),
-    keepalive: true,
-  });
-  if (!res.ok) throw new Error(await res.text().catch(()=>'submit failed'));
-  return res.json(); // { ok, tx, explorerUrl }
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+    mode: 'cors',
+    cache: 'no-store',
+  };
+}
+
+function withTimeout(promise, ms = 15000) {
+  let t;
+  return Promise.race([
+    promise.finally(() => clearTimeout(t)),
+    new Promise((_, rej) => (t = setTimeout(() => rej(new Error('timeout')), ms))),
+  ]);
+}
+
+export async function submitScore(payload) {
+  const res = await withTimeout(fetch(`${BASE}/submit-score`, json(payload)), 15000);
+  if (!res.ok) throw new Error(await res.text().catch(() => res.statusText));
+  return res.json();
 }
 
 export async function fetchLeaderboard() {
-  const r = await fetch(`${BASE}/leaderboard?${bust()}`, getOpts);
-  if (!r.ok) throw new Error('leaderboard fetch failed');
+  const r = await withTimeout(fetch(`${BASE}/leaderboard`, { mode: 'cors', cache: 'no-store' }), 12000);
   return r.json();
 }
 
 export async function fetchPlayer(a) {
-  const r = await fetch(`${BASE}/player/${a}?${bust()}`, getOpts);
-  if (!r.ok) throw new Error('player fetch failed');
+  const r = await withTimeout(fetch(`${BASE}/player/${a}`, { mode: 'cors', cache: 'no-store' }), 12000);
   return r.json();
 }
 
 export async function fetchUsername(a) {
-  const r = await fetch(`https://monad-games-id-site.vercel.app/api/check-wallet?wallet=${a}&${bust()}`, getOpts);
-  if (!r.ok) throw new Error('username fetch failed');
+  const r = await withTimeout(fetch(`https://monad-games-id-site.vercel.app/api/check-wallet?wallet=${a}`, { cache: 'no-store' }), 12000);
   return r.json();
 }
 
+// penting: pakai endpoint /tx/ensure untuk cepat/akurat
 export async function getTxStatus(hash) {
-  const r = await fetch(`${BASE}/tx/${hash}?${bust()}`, getOpts);
-  if (!r.ok) throw new Error('tx status fetch failed');
+  const r = await withTimeout(fetch(`${BASE}/tx/ensure/${hash}`, { mode: 'cors', cache: 'no-store' }), 15000);
   return r.json();
 }
