@@ -4,12 +4,10 @@
 
 /* ===== Fondasi stabil ===== */
 :root { color-scheme: dark; }
-/* kunci ke viewport yang beku (lihat index.html) */
 html, body, #root { height: var(--app-vh, 100svh); min-height: var(--app-vh, 100svh); }
 html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 * { -webkit-tap-highlight-color: transparent; }
-/* cegah auto-zoom saat fokus input */
-input, select, textarea, button { font-size: 16px; }
+input, select, textarea, button { font-size: 16px; } /* cegah auto-zoom fokus */
 
 /* High contrast guard */
 @media (forced-colors: active) {
