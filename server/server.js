@@ -8,31 +8,37 @@ import { createPublicClient, createWalletClient, http, parseAbi, defineChain } f
 import { privateKeyToAccount } from 'viem/accounts';
 import { addScore, getLeaderboard, getPlayer } from './db.js';
 
+// ===== Debug boot & guard error =====
 process.on('unhandledRejection', e => console.error('UNHANDLED', e));
 process.on('uncaughtException', e => { console.error('UNCAUGHT', e); process.exit(1); });
 
+// Baca PORT & HOST dari env; default 3000 dan 0.0.0.0
 const PORT = Number(process.env.PORT || 3000);
+const HOST = process.env.HOST || '0.0.0.0';
+
 const RPC = process.env.MONAD_TESTNET_RPC_URL || 'https://testnet-rpc.monad.xyz';
 const PK = process.env.SERVER_PRIVATE_KEY;
 const CONTRACT = '0xceCBFF203C8B6044F52CE23D914A1bfD997541A4';
 
 const RAW_ALLOW = process.env.ALLOW_ORIGINS || process.env.ALLOW_ORIGIN || '*';
 const ALLOW = RAW_ALLOW.split(',').map(s => s.trim()).filter(Boolean);
-console.log('[BOOT]', { PORT, DB_PATH: process.env.DB_PATH, RPC, ALLOW });
+
+console.log('[BOOT]', { HOST, PORT, DB_PATH: process.env.DB_PATH, RPC, ALLOW });
 
 const app = express();
 app.set('trust proxy', 1);
 app.use(helmet({ crossOriginResourcePolicy: false }));
 app.use(express.json());
 
-// Preflight CORS aman
+// ----- CORS preflight aman -----
+function originOk(origin) {
+  if (!origin || ALLOW.includes('*') || ALLOW.includes(origin)) return true;
+  try { return new URL(origin).host.endsWith('.vercel.app'); } catch { return false; }
+}
 app.use((req, res, next) => {
   if (req.method === 'OPTIONS') {
     const origin = req.headers.origin;
-    const ok = !origin || ALLOW.includes('*') || ALLOW.includes(origin) || (() => {
-      try { return new URL(origin).host.endsWith('.vercel.app'); } catch { return false; }
-    })();
-    if (ok) {
+    if (originOk(origin)) {
       res.header('Access-Control-Allow-Origin', origin || '*');
       res.header('Vary', 'Origin');
       res.header('Access-Control-Allow-Credentials', 'true');
@@ -44,36 +50,32 @@ app.use((req, res, next) => {
   }
   next();
 });
-
 app.use(cors({
-  origin: (origin, cb) => {
-    const ok = !origin || ALLOW.includes('*') || ALLOW.includes(origin) || (() => {
-      try { return new URL(origin).host.endsWith('.vercel.app'); } catch { return false; }
-    })();
-    cb(null, ok);
-  },
+  origin: (origin, cb) => cb(null, originOk(origin)),
   credentials: true
 }));
 app.use(morgan('dev'));
 
+// ----- Rate limit ringan -----
 const limiter = new RateLimiterMemory({ points: 8, duration: 10 });
 app.use(async (req, res, next) => {
   try { await limiter.consume(req.ip); next(); }
   catch { res.status(429).json({ error: 'Too many requests' }); }
 });
 
-// Health SELALU hidup
+// ===== /health SELALU hidup =====
 app.get('/health', (req, res) => res.json({ ok: true }));
 
-// ===== Inisialisasi chain aman (tidak mematikan server kalau error)
+// ===== Inisialisasi chain aman (tidak mematikan server kalau gagal) =====
 let publicClient = null, walletClient = null, account = null;
 
 const monadTestnet = defineChain({
-  id: 10143,
+  id: 10143, // sesuaikan bila perlu
   name: 'Monad Testnet',
   nativeCurrency: { name: 'MON', symbol: 'MON', decimals: 18 },
   rpcUrls: { default: { http: [RPC] }, public: { http: [RPC] } }
 });
+
 const ABI = parseAbi([
   'function updatePlayerData(address player, uint256 scoreAmount, uint256 transactionAmount)'
 ]);
@@ -90,18 +92,23 @@ const ABI = parseAbi([
   }
 })();
 
-// ===== Routes
+// ===== Routes utama =====
 app.get('/leaderboard', (req, res) => res.json(getLeaderboard(50)));
 app.get('/player/:addr', (req, res) => res.json(getPlayer(req.params.addr)));
 
 app.post('/submit-score', async (req, res) => {
   try {
     const { player, username, score } = req.body || {};
-    if (!player || typeof score !== 'number' || score <= 0) return res.status(400).json({ error: 'Invalid payload' });
+    if (!player || typeof score !== 'number' || score <= 0) {
+      return res.status(400).json({ error: 'Invalid payload' });
+    }
 
     await addScore({ player, username, score });
 
-    if (!walletClient) return res.json({ ok: true, tx: null, note: 'saved locally (chain not ready)' });
+    if (!walletClient) {
+      // chain belum siap — tetap sukses lokal
+      return res.json({ ok: true, tx: null, note: 'saved locally (chain not ready)' });
+    }
 
     const hash = await walletClient.writeContract({
       address: CONTRACT,
@@ -115,4 +122,5 @@ app.post('/submit-score', async (req, res) => {
   }
 });
 
-app.listen(PORT, () => console.log(`Server on :${PORT}`));
+// ===== Pastikan bind ke 0.0.0.0:PORT =====
+app.listen(PORT, HOST, () => console.log(`Server on ${HOST}:${PORT}`));
