@@ -1,134 +1,142 @@
-// client/src/components/Dashboard.jsx
-import { useEffect, useMemo, useState } from 'react';
-import { fetchLeaderboard, fetchPlayer } from '../lib/api';
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-import HowToPlay from './HowToPlay';
+import { useMemo } from 'react';
+import useDashboardLive from '../hooks/useDashboardLive';
+import {
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+} from 'recharts';
 
-function StatCard({ label, value, hint }) {
-  return (
-    <div className="card-tight">
-      <div className="metric">{label}</div>
-      <div className="metric-xl mt-1">{value}</div>
-      {hint && <div className="text-[11px] text-zinc-500 mt-1">{hint}</div>}
-    </div>
-  );
+function shortAddr(a = '') {
+  return a ? `${a.slice(0, 6)}…${a.slice(-4)}` : '—';
 }
 
-function Leaderboard({ rows=[] }) {
-  return (
-    <div className="card">
-      <div className="flex items-center justify-between mb-2">
-        <div className="font-semibold">Global Leaderboard</div>
-        <div className="text-xs text-zinc-400">{rows.length} entries</div>
-      </div>
-      <div className="rounded-xl border border-zinc-800 overflow-hidden">
-        <table className="min-w-full text-[13px]">
-          <thead className="bg-black/70 backdrop-blur text-zinc-400">
-            <tr>
-              <th className="text-left p-2">#</th>
-              <th className="text-left p-2">Username</th>
-              <th className="text-left p-2">Address</th>
-              <th className="text-right p-2">Best Distance</th>
-              <th className="text-left p-2">Last Played</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.slice(0,8).map((r,i)=>(
-              <tr key={r.player} className="border-t border-zinc-800">
-                <td className="p-2 w-8">{i+1}</td>
-                <td className="p-2">{r.username ? `@${r.username}` : '—'}</td>
-                <td className="p-2 font-mono">{r.player?.slice(0,6)}…{r.player?.slice(-4)}</td>
-                <td className="p-2 text-right font-semibold">{Number(r.high_score||0).toLocaleString()}</td>
-                <td className="p-2 text-zinc-400">
-                  {r.last_played ? new Date(r.last_played).toLocaleString() : '—'}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      {rows.length>8 && <div className="mt-1 text-[11px] text-zinc-500">Showing top 8</div>}
-    </div>
-  );
+function dateLabel(iso) {
+  try {
+    const d = new Date(iso);
+    return d.toLocaleString();
+  } catch {
+    return iso || '—';
+  }
 }
 
 export default function Dashboard({ identity }) {
-  const [rows, setRows] = useState([]);
-  const [me, setMe] = useState(null);
+  const { leaderboard, global, player } = useDashboardLive(identity);
 
-  useEffect(()=>{ fetchLeaderboard().then(setRows); },[]);
-  useEffect(()=>{ if(identity?.address) fetchPlayer(identity.address).then(setMe); },[identity]);
-
-  // ======= Nilai yang AKURAT (tidak bergantung urutan data) =======
-  const playersCount = useMemo(
-    () => new Set(rows.map(r => r.player)).size,
-    [rows]
-  );
-
-  const topDistance = useMemo(
-    () => rows.reduce((m, r) => Math.max(m, Number(r.high_score||0)), 0),
-    [rows]
-  );
-
-  const myPB = useMemo(() => {
-    const fromBest = Number(me?.best ?? 0);
-    const fromHistory = Array.isArray(me?.history) && me.history.length
-      ? Math.max(...me.history.map(h => Number(h.score||0)))
-      : 0;
-    return Math.max(fromBest, fromHistory);
-  }, [me]);
-
-  const mySessions = useMemo(() => {
-    if (typeof me?.plays === 'number') return me.plays;
-    if (Array.isArray(me?.history)) return me.history.length;
-    return 0;
-  }, [me]);
-
-  const chartData = useMemo(() => {
-    const src = Array.isArray(me?.history) ? me.history : [];
-    return src.slice().reverse().map(h => ({
-      t: new Date(h.at).toLocaleTimeString(),
-      s: Number(h.score||0)
-    }));
-  }, [me]);
+  const rows = useMemo(() => leaderboard ?? [], [leaderboard]);
+  const history = useMemo(() => (player?.history ?? []).slice().reverse(), [player]);
 
   return (
-    <div className="grid grid-cols-1 2xl:grid-cols-3 gap-6">
-      {/* LEFT: Stats + Leaderboard */}
-      <div className="2xl:col-span-2 space-y-6">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard label="Players" value={playersCount.toLocaleString()} />
-          <StatCard label="Top Distance" value={topDistance.toLocaleString()} hint="Global best (m)" />
-          <StatCard label="Your PB" value={myPB.toLocaleString()} hint="Personal best (m)" />
-          <StatCard label="Sessions" value={mySessions.toLocaleString()} hint="24h total" />
+    <div className="space-y-6">
+      {/* Kartu ringkas */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="card p-4">
+          <div className="text-xs uppercase tracking-wide text-zinc-400">Players</div>
+          <div className="text-2xl font-semibold mt-1">{global?.players ?? '—'}</div>
         </div>
-
-        <Leaderboard rows={rows} />
-
-        <div className="card">
-          <div className="font-semibold mb-2">Your Progress</div>
-          <div className="h-[220px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={chartData}>
-                <defs>
-                  <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#c084fc" stopOpacity={0.9}/>
-                    <stop offset="95%" stopColor="#c084fc" stopOpacity={0.1}/>
-                  </linearGradient>
-                </defs>
-                <XAxis dataKey="t" hide/>
-                <YAxis hide/>
-                <Tooltip/>
-                <Area type="monotone" dataKey="s" stroke="#c084fc" fillOpacity={1} fill="url(#g)" />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
+        <div className="card p-4">
+          <div className="text-xs uppercase tracking-wide text-zinc-400">Top Distance</div>
+          <div className="text-2xl font-semibold mt-1">{global?.global_best ?? '—'}</div>
+          <div className="text-[11px] text-zinc-500">Global best (m)</div>
+        </div>
+        <div className="card p-4">
+          <div className="text-xs uppercase tracking-wide text-zinc-400">Your PB</div>
+          <div className="text-2xl font-semibold mt-1">{player?.best ?? '—'}</div>
+          <div className="text-[11px] text-zinc-500">Personal best (m)</div>
+        </div>
+        <div className="card p-4">
+          <div className="text-xs uppercase tracking-wide text-zinc-400">Sessions</div>
+          <div className="text-2xl font-semibold mt-1">{global?.last24h ?? '—'}</div>
+          <div className="text-[11px] text-zinc-500">24h total</div>
         </div>
       </div>
 
-      {/* RIGHT: only How to Play now */}
-      <div className="space-y-6">
-        <HowToPlay />
+      {/* Leaderboard global */}
+      <div className="card p-4">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-lg font-semibold">Global Leaderboard</h3>
+          <div className="text-xs text-zinc-500">
+            {rows?.length || 0} entries
+          </div>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="min-w-full text-sm">
+            <thead className="text-left text-zinc-400">
+              <tr className="border-b border-white/5">
+                <th className="py-2 pr-3">#</th>
+                <th className="py-2 pr-3">Username</th>
+                <th className="py-2 pr-3">Address</th>
+                <th className="py-2 pr-3">Best Distance</th>
+                <th className="py-2 pr-3">Last Played</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="py-6 text-center text-zinc-500">
+                    No entries yet.
+                  </td>
+                </tr>
+              )}
+              {rows.map((r, i) => (
+                <tr key={r.player + i} className="border-b border-white/5">
+                  <td className="py-2 pr-3">{i + 1}</td>
+                  <td className="py-2 pr-3">{r.username || '—'}</td>
+                  <td className="py-2 pr-3 font-mono">{shortAddr(r.player)}</td>
+                  <td className="py-2 pr-3">{r.high_score}</td>
+                  <td className="py-2 pr-3">{dateLabel(r.last_played)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Progress pemain */}
+      <div className="card p-4">
+        <h3 className="text-lg font-semibold mb-3">Your Progress</h3>
+        {history.length === 0 ? (
+          <div className="text-sm text-zinc-500">No runs yet. Play to see your progress here.</div>
+        ) : (
+          <div className="h-56">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={history}>
+                <defs>
+                  <linearGradient id="c" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopOpacity={0.35}/>
+                    <stop offset="95%" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeOpacity={0.1} vertical={false} />
+                <XAxis
+                  dataKey="at"
+                  tickFormatter={(v) => {
+                    try {
+                      const d = new Date(v);
+                      return d.toLocaleTimeString();
+                    } catch { return v; }
+                  }}
+                  minTickGap={24}
+                />
+                <YAxis width={40} />
+                <Tooltip
+                  formatter={(value, name) => [value, name === 'score' ? 'Distance (m)' : name]}
+                  labelFormatter={(l) => dateLabel(l)}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="score"
+                  strokeOpacity={0.9}
+                  fillOpacity={1}
+                  fill="url(#c)"
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        )}
       </div>
     </div>
   );
