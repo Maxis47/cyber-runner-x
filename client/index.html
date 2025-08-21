@@ -10,7 +10,7 @@
       content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no, interactive-widget=overlays-content"
     />
 
-    <!-- Matikan caching di level HTML (bantu hajar cache device) -->
+    <!-- Matikan caching level dokumen (bantu device yang keras kepala) -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
@@ -20,41 +20,58 @@
     <title>Cyber Runner X</title>
 
     <style>
-      /* Bekukan tinggi dengan --app-vh (fallback 100svh yang stabil di mobile) */
-      html, body, #root { height: var(--app-vh, 100svh); min-height: var(--app-vh, 100svh); }
+      /* ===== Bekukan viewport & pindahkan scroll ke #root (anti auto-zoom) ===== */
+      :root { --app-vh: 100svh; }
+      html, body { height: var(--app-vh); min-height: var(--app-vh); }
+      /* body fixed → tidak ikut “memanjang/mengecil” saat address bar show/hide */
+      body {
+        margin: 0;
+        background: #0B0B12;
+        height: var(--app-vh);
+        min-height: var(--app-vh);
+        overflow: hidden;             /* <— kunci scroll di body */
+        overscroll-behavior-y: none;
+        -webkit-font-smoothing: antialiased;
+      }
+      /* scroll dipindah ke #root agar layout stabil */
+      #root{
+        position: fixed; inset: 0;
+        height: 100%; min-height: 100%;
+        overflow: auto;               /* <— scroll di sini */
+        -webkit-overflow-scrolling: touch;
+      }
       * { -webkit-tap-highlight-color: transparent; }
-      body { margin: 0; background: #0B0B12; overscroll-behavior-y: none; }
     </style>
 
     <script>
-      // ===== 1) Bekukan tinggi viewport (hindari "auto-zoom" karena address bar hide/show) =====
+      // 1) Bekukan tinggi viewport: address bar tidak memicu reflow layout
       (function () {
         function freezeVH() {
           const vv = window.visualViewport;
           const h = vv ? Math.round(vv.height) : window.innerHeight;
           document.documentElement.style.setProperty('--app-vh', h + 'px');
+          // Pastikan body ikut tinggi terbaru
+          document.body && (document.body.style.height = h + 'px');
         }
         freezeVH();
         window.addEventListener('orientationchange', () => setTimeout(freezeVH, 250), { passive: true });
         window.addEventListener('pageshow', () => setTimeout(freezeVH, 150), { passive: true });
       })();
 
-      // ===== 2) Saring resize event yang hanya berubah TINGGI (efek scroll) =====
-      // Ini mencegah Game.jsx memanggil resize() setiap kali toolbar mobile muncul/hilang.
+      // 2) Saring resize event yang hanya ubah TINGGI (efek address bar)
       (function () {
         let lastW = window.innerWidth || document.documentElement.clientWidth;
         window.addEventListener('resize', function (e) {
           const w = window.innerWidth || document.documentElement.clientWidth;
-          // kalau width hampir tidak berubah, anggap ini "height-only resize" → blokir
-          if (Math.abs(w - lastW) < 2) {
+          if (Math.abs(w - lastW) < 2) {  // height-only change → tahan
             e.stopImmediatePropagation && e.stopImmediatePropagation();
             return;
           }
           lastW = w;
-        }, true); // capture true agar listener lain (termasuk React) tidak kebagian event "palsu"
+        }, true);
       })();
 
-      // ===== 3) Cegah pinch & double-tap zoom =====
+      // 3) Cegah pinch/double-tap zoom
       (function () {
         const prevent = e => { e.preventDefault(); };
         document.addEventListener('gesturestart', prevent, { passive: false });
@@ -67,7 +84,7 @@
         }, { passive: false });
       })();
 
-      // ===== 4) iOS: paksa auth jadi full-page redirect (bypass popup blocker/ITP) =====
+      // 4) iOS: paksa auth jadi full-page redirect (bypass popup blocker/ITP)
       (function () {
         const ua = navigator.userAgent || '';
         const isIOS = /iP(hone|od|ad)/.test(ua);
@@ -83,16 +100,14 @@
         };
       })();
 
-      // ===== 5) Unregister service worker lama supaya tidak nyimpen JS versi lama =====
+      // 5) Unregister service worker lama (hindari JS versi lama yang bikin data “hilang”)
       (function () {
         if ('serviceWorker' in navigator) {
-          navigator.serviceWorker.getRegistrations().then(regs => {
-            for (const r of regs) r.unregister();
-          }).catch(() => {});
+          navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister())).catch(()=>{});
         }
       })();
 
-      // (Opsional) Hard override kalau mau pakai base API manual dari HTML:
+      // (Optional) override manual kalau mau:
       // window.__API_BASE__ = "https://cyber-runner-x-production.up.railway.app";
     </script>
   </head>
