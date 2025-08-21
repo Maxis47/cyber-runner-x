@@ -2,14 +2,15 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <!-- Kunci scale & stabilkan area aman (notch) -->
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
     />
     <meta name="theme-color" content="#0b0b12" />
     <title>Cyber Runner X</title>
     <script>
-      // 100vh yang stabil di mobile
+      // 100vh stabil di mobile (address bar show/hide)
       function setVH() {
         var h =
           (window.visualViewport && window.visualViewport.height) ||
@@ -18,9 +19,9 @@
           800;
         document.documentElement.style.setProperty("--app-vh", h + "px");
       }
-      window.addEventListener("resize", setVH);
+      window.addEventListener("resize", setVH, { passive: true });
       if (window.visualViewport) {
-        window.visualViewport.addEventListener("resize", setVH);
+        window.visualViewport.addEventListener("resize", setVH, { passive: true });
       }
       setVH();
     </script>
