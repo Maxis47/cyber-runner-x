@@ -1,4 +1,3 @@
-// client/src/components/GameCanvas.jsx
 import React from "react";
 
 /**
@@ -20,11 +19,14 @@ export default function GameCanvas({ wrapRef, canvasRef, className = "" }) {
       style={{
         marginLeft: "auto",
         marginRight: "auto",
+        /* Batasin lebar di desktop tanpa ubah format/UI */
+        maxWidth: "min(92vw, 760px)",
+        /* kunci tinggi relatif ke viewport yang beku → tidak “zoomed” saat scroll */
         height: "auto",
         maxHeight: "calc(var(--app-vh, 100svh) - 24px)",
         touchAction: "manipulation",
         overscrollBehavior: "contain",
-        // ⚠️ Hapus 'contain: layout size' agar ResizeObserver selalu akurat
+        contain: "layout size",
       }}
     >
       <canvas
