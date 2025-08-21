@@ -14,7 +14,7 @@ import { addScore, getLeaderboard, getPlayer } from './db.js';
 const PORT = process.env.PORT || 3000;
 const ALLOW = (process.env.ALLOW_ORIGIN || '*')
   .split(',')
-  .map(s => s.trim().replace(/\/+$/, '')) // normalisasi: hapus trailing slash
+  .map(s => s.trim().replace(/\/+$/, ''))
   .filter(Boolean);
 const RPC = process.env.MONAD_TESTNET_RPC_URL || 'https://testnet-rpc.monad.xyz';
 const PK = process.env.SERVER_PRIVATE_KEY; // address ini harus didaftarkan sebagai _game
@@ -209,8 +209,8 @@ app.get('/tx/ensure/:hash', async (req, res) => {
   try {
     const rcpt = await publicClient.waitForTransactionReceipt({
       hash,
-      timeout: 12_000,          // 12 detik
-      pollingInterval: 800,     // sejalan dgn FE
+      timeout: 12_000,
+      pollingInterval: 800,
     });
 
     // ambil nonce dari tx untuk konsistensi
