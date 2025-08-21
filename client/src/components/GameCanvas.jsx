@@ -3,9 +3,8 @@ import React from "react";
 
 /**
  * Kanvas pembungkus:
- * - 9:16 (portrait) dihitung di Game.jsx
- * - Selalu di TENGAH (mx-auto)
- * - Safe: min-height agar tidak “kolaps” sebelum resize selesai
+ * - 9:16 dihitung di Game.jsx (file ini gak ubah format/UI)
+ * - Tambah minHeight agar tidak kolaps di mobile first paint
  * - Swipe mulus: touchAction: 'none'
  */
 export default function GameCanvas({ wrapRef, canvasRef, className = "" }) {
@@ -18,18 +17,14 @@ export default function GameCanvas({ wrapRef, canvasRef, className = "" }) {
          shadow-[0_0_80px_rgba(0,0,0,0.25)]
          overflow-hidden flex items-center justify-center ${className}`
       }
-      style={{
-        marginLeft: "auto",
-        marginRight: "auto",
-        minHeight: "420px",        // cegah “hilang” di mobile saat first paint
-      }}
+      style={{ marginLeft: "auto", marginRight: "auto", minHeight: "420px" }}
     >
       <canvas
         ref={canvasRef}
         style={{
           display: "block",
           width: "100%",
-          minHeight: "392px",       // jaga ruang awal
+          minHeight: "392px",
           borderRadius: 12,
           touchAction: "none",
         }}
