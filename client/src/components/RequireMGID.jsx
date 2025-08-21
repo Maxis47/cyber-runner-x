@@ -19,24 +19,32 @@ export default function RequireMGID({ children }) {
   const [checking, setChecking] = useState(false);
   const [identity, setIdentity] = useState(null); // { address, username }
 
-  const openMGIDModal = useCallback(async () => {
+  // === FIX iOS stuck: panggil login DI DALAM gesture klik tanpa await + fallback otomatis ===
+  const openMGIDModal = useCallback(() => {
     try {
-      // Prefer direct cross-app if SDK mendukung; fallback ke login() biasa
+      let resolved = false;
+      const redirectTo = window.location.href; // balik ke halaman yang sama
+
       if (typeof loginWithCrossAppAccount === "function") {
-        await loginWithCrossAppAccount({
-          providerAppId: CROSS_APP_ID,
-          createAccount: true,
-          // 🔧 PENTING UNTUK MOBILE: pastikan redirect kembali ke app
-          redirectTo: window.location.origin,
-        });
+        Promise
+          .resolve(loginWithCrossAppAccount({ providerAppId: CROSS_APP_ID, createAccount: true, redirectTo }))
+          .then(() => { resolved = true; })
+          .catch((e) => { console.error("MGID cross-app error:", e); });
       } else {
-        await login({
-          // 🔧 sama: redirect balik ke app
-          redirectTo: window.location.origin,
-        });
+        Promise
+          .resolve(login({ redirectTo }))
+          .then(() => { resolved = true; })
+          .catch((e) => { console.error("MGID login error:", e); });
       }
+
+      // Popup kadang diblokir iOS → paksa fallback login() setelah 2.5s jika belum resolved
+      window.setTimeout(() => {
+        if (!resolved) {
+          Promise.resolve(login({ redirectTo })).catch(() => {});
+        }
+      }, 2500);
     } catch (e) {
-      console.error("MGID login error:", e);
+      console.error("MGID login invoke error:", e);
     }
   }, [login, loginWithCrossAppAccount]);
 
@@ -65,10 +73,11 @@ export default function RequireMGID({ children }) {
         return;
       }
 
-      // Cek username MGID
+      // Cek username MGID (NO-CACHE supaya selalu fresh di semua device)
       try {
         const r = await fetch(
-          `https://monad-games-id-site.vercel.app/api/check-wallet?wallet=${addr}`
+          `https://monad-games-id-site.vercel.app/api/check-wallet?wallet=${addr}`,
+          { cache: "no-store" }
         );
         const d = await r.json();
         const username = d?.user?.username || null;
