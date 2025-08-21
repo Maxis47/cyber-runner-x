@@ -2,57 +2,29 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, viewport-fit=cover"
-    />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+    <meta name="theme-color" content="#0b0b12" />
     <title>Cyber Runner X</title>
-    <style>
-      #ext-warning {
-        position: fixed;
-        left: 0; right: 0; top: 0;
-        background: #ff3b3b; color: #fff;
-        font: 13px/1.4 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-        padding: 10px 14px; z-index: 9999; display: none;
-      }
-      #ext-warning a { color: #fff; text-decoration: underline; }
-    </style>
     <script>
-      // Deteksi bentrok provider yang sering memicu "Cannot redefine property: ethereum"
-      (function(){
-        const show = (msg) => {
-          const bar = document.getElementById('ext-warning');
-          if (!bar) return;
-          bar.style.display = 'block';
-          bar.textContent = msg + ' — Open in Incognito / disable wallet & security extensions temporarily.';
-        };
-        // beberapa wallet menaruh window.ethereum.providers
-        const hasMulti =
-          typeof window !== 'undefined' &&
-          window.ethereum &&
-          Array.isArray(window.ethereum.providers) &&
-          window.ethereum.providers.length > 1;
-
-        // beberapa ekstensi re-define property 'ethereum'
-        // kita tidak bisa cegah dari sini, tapi bisa beri info awal:
-        if (hasMulti) {
-          show('Multiple wallet providers detected (extension conflict)');
-        } else {
-          // coba deteksi setelah DOM ready (beberapa ekstensi injeksi agak telat)
-          window.addEventListener('load', () => {
-            try {
-              const p = window.ethereum && window.ethereum.providers;
-              if (Array.isArray(p) && p.length > 1) {
-                show('Multiple wallet providers detected (extension conflict)');
-              }
-            } catch {}
-          });
+      // Safe viewport height (mengatasi address bar naik-turun di mobile)
+      (function () {
+        function setVH() {
+          try {
+            var v = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+            if (v) document.documentElement.style.setProperty('--app-vh', v + 'px');
+          } catch {}
+        }
+        setVH();
+        window.addEventListener('resize', setVH);
+        if (window.visualViewport) {
+          window.visualViewport.addEventListener('resize', setVH);
+          window.visualViewport.addEventListener('scroll', setVH);
         }
       })();
     </script>
   </head>
-  <body class="bg-black">
-    <div id="ext-warning"></div>
+  <body class="aurora-bg">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
