@@ -12,13 +12,13 @@ function buildExplorer(hash, fromServer) {
 /**
  * Mulai memantau transaksi.
  * @param {string} hash - tx hash
- * @param {(updater: (prev)=>any)|Object} setState - setState dari React (fungsi)
+ * @param {(updater: (prev)=>any)} setState - React setState untuk OnchainStatus
  * @returns {() => void} stop function
  */
 export function startTxWatcher(hash, setState) {
   if (!hash || typeof setState !== 'function') return () => {};
 
-  // set awal (pending)
+  // state awal
   setState((prev) => ({
     ...(prev || {}),
     stage: 'pending',
@@ -40,7 +40,6 @@ export function startTxWatcher(hash, setState) {
       const r = await fetch(url, { cache: 'no-store' });
       const d = await r.json();
 
-      // normalisasi agar OnchainStatus.jsx langsung bisa render
       const next = {
         stage: d.stage || 'pending',
         hash: d.hash || hash,
@@ -56,23 +55,16 @@ export function startTxWatcher(hash, setState) {
 
       setState((prev) => ({ ...(prev || {}), ...next }));
 
-      // stop setelah mined / failed
       if (next.stage === 'mined' || next.stage === 'failed') {
         stopped = true;
         return;
       }
     } catch (e) {
-      // Biarkan watcher lanjut; jangan stop
       setState((prev) => ({ ...(prev || {}), error: e.message }));
     }
-    if (!stopped) {
-      setTimeout(tick, 800); // tempo cepat tapi hemat
-    }
+    if (!stopped) setTimeout(tick, 800);
   }
 
-  // mulai
   tick();
-
-  // stop fn
   return () => { stopped = true; };
 }
