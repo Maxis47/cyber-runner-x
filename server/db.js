@@ -6,7 +6,6 @@ import path from 'path';
 const defaultData = { scores: [] };
 const DB_PATH = process.env.DB_PATH || './scores.db';
 
-// Pastikan direktori DB ada
 async function ensureDir(p) {
   const dir = path.dirname(p);
   try { await fs.mkdir(dir, { recursive: true }); } catch {}
@@ -61,4 +60,16 @@ export function getPlayer(addr) {
     .slice(0, 50)
     .map(r => ({ score: r.score, at: r.at }));
   return { best, plays, history };
+}
+
+/** Global stats untuk kartu dashboard */
+export function getGlobalStats() {
+  const rows = db.data.scores;
+  const playersSet = new Set(rows.map(r => r.player));
+  const players = playersSet.size;
+  const global_best = rows.reduce((m, r) => Math.max(m, r.score), 0);
+  const total_plays = rows.length;
+  const since = Date.now() - 24 * 60 * 60 * 1000;
+  const last24h = rows.filter(r => new Date(r.at).getTime() >= since).length;
+  return { players, global_best, total_plays, last24h };
 }
