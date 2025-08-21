@@ -2,26 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ===== Fondasi stabil ===== */
+/* ====== Fondasi stabil & anti autosize ====== */
 :root { color-scheme: dark; }
+/* ➜ ruang cadangan default di bawah kanvas supaya panel tidak ketindih */
+:root { --canvas-reserve: 280px; }
+
 html, body, #root { height: var(--app-vh, 100svh); min-height: var(--app-vh, 100svh); }
+body { min-height: var(--app-vh, 100svh); }
 html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 * { -webkit-tap-highlight-color: transparent; }
 input, select, textarea, button { font-size: 16px; } /* cegah auto-zoom fokus */
 
-/* High contrast guard */
+@media (max-width: 640px) {
+  /* HP: ruang cadangan sedikit lebih kecil */
+  :root { --canvas-reserve: 230px; }
+}
+@media (min-width: 1280px) {
+  /* Desktop lebar: tambah sedikit ruang agar panel kiri/kanan tidak saling tindih */
+  :root { --canvas-reserve: 320px; }
+}
+
+/* Saat OS paksa high-contrast, jangan dibalik warnanya */
 @media (forced-colors: active) {
   * { forced-color-adjust: none; }
   body { background: #0b0b12 !important; color: #e9e9f8 !important; }
 }
 
-/* ===== Aurora premium (vivid & sinkron) ===== */
+/* ====== Aurora premium (vivid & sinkron) ====== */
 body{
   --bg1:#07070b;
   --bg2:#0b0b14;
-  --aur1: rgba(168,85,247,.28);
-  --aur2: rgba(34,211,238,.22);
-  --aur3: rgba(236,72,153,.22);
+  --aur1: rgba(168,85,247,.28);  /* violet */
+  --aur2: rgba(34,211,238,.22);  /* cyan */
+  --aur3: rgba(236,72,153,.22);  /* pink */
 
   background:
     radial-gradient(1200px 820px at 18% -10%, var(--aur1), transparent 40%),
@@ -47,8 +60,7 @@ body{
 }
 .btn{ @apply rounded-md border border-white/15 px-3 py-1; }
 
-/* ===== Aurora button (dipakai GLOBAL) =====
-   - Sekarang .btn-primary dan .btn-aurora identik → semua tombol sign-in sinkron */
+/* ===== Aurora button (global) ===== */
 @keyframes auroraMove {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
@@ -98,19 +110,17 @@ body{
     0 0 0 2px rgba(255,255,255,.2),
     0 0 0 6px rgba(167,139,250,.35);
 }
-
-/* ukuran kecil buat tombol di header (opsional) */
 .btn-aurora--sm{ @apply px-3 py-1 rounded-full text-sm; }
 
 .metric     { @apply text-[11px] uppercase tracking-wide text-zinc-400; }
 .metric-xl  { @apply text-2xl font-bold; }
 
-/* Recharts tooltip */
+/* Tooltip Recharts agar kontras */
 .recharts-default-tooltip {
   background: rgba(0,0,0,.86) !important;
   border: 1px solid rgba(255,255,255,.12) !important;
-  color: #e8e9f6 !important;
+  color: #e8e8f6 !important;
 }
 
-/* Gesture stabil */
+/* Sedikit stabilisasi scroll/gesture */
 body { overscroll-behavior: contain; }
