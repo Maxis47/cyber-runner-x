@@ -2,25 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Paksa dark & cegah OS mengganti warna */
+/* ====== Fondasi stabil & anti autosize ====== */
 :root { color-scheme: dark; }
-
-/* Tinggi layar yang stabil */
 html, body, #root { height: 100%; min-height: 100%; }
-body { min-height: var(--app-vh, 100vh); } /* pakai hasil script index.html */
+body { min-height: var(--app-vh, 100vh); }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+* { -webkit-tap-highlight-color: transparent; }
 
+/* Saat OS paksa high-contrast, jangan dibalik warnanya */
 @media (forced-colors: active) {
   * { forced-color-adjust: none; }
   body { background: #0b0b12 !important; color: #e9e9f8 !important; }
 }
 
-/* === Aurora premium yang konsisten === */
+/* ====== Aurora premium (vivid & sinkron) ====== */
 body{
   --bg1:#07070b;
-  --bg2:#0e0b1a;
-  --aur1: rgba(159,122,234,.26); /* ungu */
-  --aur2: rgba(34,211,238,.20);  /* cyan */
-  --aur3: rgba(244,114,182,.20); /* pink */
+  --bg2:#0b0b14;
+  --aur1: rgba(168,85,247,.28);  /* violet */
+  --aur2: rgba(34,211,238,.22);  /* cyan */
+  --aur3: rgba(236,72,153,.22);  /* pink */
 
   background:
     radial-gradient(1200px 820px at 18% -10%, var(--aur1), transparent 40%),
@@ -33,23 +34,23 @@ body{
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Utility yang sudah kamu pakai */
+/* ====== Komponen yang sudah kamu pakai (glassy, premium) ====== */
 .card{
   @apply rounded-2xl border border-white/10 p-4;
-  background: rgba(255,255,255,.05);
-  backdrop-filter: blur(8px);
+  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+  backdrop-filter: blur(10px);
 }
 .card-tight{
   @apply rounded-xl border border-white/10 p-3;
-  background: rgba(255,255,255,.05);
-  backdrop-filter: blur(6px);
+  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+  backdrop-filter: blur(8px);
 }
 .btn{ @apply rounded-md border border-white/15 px-3 py-1; }
 .btn-primary{
   @apply rounded-md px-3 py-1 font-medium;
   background: linear-gradient(90deg,#8b5cf6,#06b6d4);
   color: #fff;
-  box-shadow: 0 0 28px rgba(139,92,246,.24);
+  box-shadow: 0 0 28px rgba(139,92,246,.28), 0 0 24px rgba(6,182,212,.18) inset;
 }
 
 .metric     { @apply text-[11px] uppercase tracking-wide text-zinc-400; }
@@ -57,10 +58,10 @@ body{
 
 /* Tooltip Recharts agar kontras */
 .recharts-default-tooltip {
-  background: rgba(0,0,0,.85) !important;
+  background: rgba(0,0,0,.86) !important;
   border: 1px solid rgba(255,255,255,.12) !important;
   color: #e8e8f6 !important;
 }
 
-/* Cegah pinch/double-tap zoom efek berantakan */
-* { -webkit-tap-highlight-color: transparent; }
+/* Sedikit stabilisasi scroll/gesture */
+body { overscroll-behavior: contain; }
