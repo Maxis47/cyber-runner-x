@@ -1,7 +1,7 @@
 // ====== BASE URL sangat robust ======
 const rawBase =
   import.meta.env.VITE_API_URL ||
-  import.meta.env.VITE_API_BASE ||                           // fallback env lama
+  import.meta.env.VITE_API_BASE ||
   (typeof window !== "undefined" ? window.__API_BASE__ : "") || "";
 
 function normalizeBase(u) {
@@ -12,16 +12,19 @@ function normalizeBase(u) {
 }
 export const BASE = normalizeBase(rawBase);
 
-// ====== util: no-store kuat + retry + coalescing + last-good ======
+// ====== util: no-store keras + retry + coalescing + last-good + query-bust ======
 const inflight = new Map();      // key -> Promise
 const lastGood = new Map();      // key -> { ts, data }
-const TTL = 0;                   // selalu fresh (tanpa cache mem), tapi simpan last good untuk anti-flicker
 const RETRIES = 3;
 const BACKOFFS = [200, 500, 1200];
 
+function addNoStoreQS(url) {
+  const sep = url.includes("?") ? "&" : "?";
+  return `${url}${sep}__ts=${Date.now()}`; // bust CDN/intermediate cache
+}
 async function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
 
-async function fetchJSON(url, opt = {}, keyForCoalesce) {
+async function fetchJSON(url, opt = {}, keyForCoalesce, isGET = true) {
   const headers = {
     "Content-Type": "application/json",
     "Cache-Control": "no-cache, no-store, must-revalidate",
@@ -29,16 +32,18 @@ async function fetchJSON(url, opt = {}, keyForCoalesce) {
     "Accept": "application/json",
     ...(opt.headers || {}),
   };
+  const finalURL = isGET ? addNoStoreQS(url) : url;
 
   const doFetch = async () => {
     let err;
     for (let i = 0; i < RETRIES; i++) {
       try {
-        const res = await fetch(url, {
+        const res = await fetch(finalURL, {
           mode: "cors",
           credentials: "omit",
           cache: "no-store",
           referrerPolicy: "no-referrer",
+          keepalive: true,
           ...opt,
           headers,
         });
@@ -47,23 +52,20 @@ async function fetchJSON(url, opt = {}, keyForCoalesce) {
           throw new Error(text || res.statusText || `HTTP ${res.status}`);
         }
         const data = await res.json();
-        lastGood.set(keyForCoalesce || url, { ts: Date.now(), data });
+        lastGood.set(keyForCoalesce || finalURL, { ts: Date.now(), data });
         return data;
       } catch (e) {
         err = e;
-        // kalau masih ada kesempatan, tunggu lalu ulang
         if (i < RETRIES - 1) await sleep(BACKOFFS[i]);
       }
     }
-    // Gagal semua → coba kembalikan last good agar UI tidak jadi kosong
-    if (lastGood.has(keyForCoalesce || url)) {
-      return lastGood.get(keyForCoalesce || url).data;
+    if (lastGood.has(keyForCoalesce || finalURL)) {
+      return lastGood.get(keyForCoalesce || finalURL).data;
     }
     throw err || new Error("Network error");
   };
 
-  // coalescing: kalau request ke key yang sama sedang jalan, tunggu saja
-  const key = keyForCoalesce || url;
+  const key = keyForCoalesce || finalURL;
   if (inflight.has(key)) return inflight.get(key);
   const p = doFetch().finally(() => inflight.delete(key));
   inflight.set(key, p);
@@ -76,7 +78,7 @@ export async function submitScore({ player, username, score }) {
   return fetchJSON(`${BASE}/submit-score`, {
     method: "POST",
     body: JSON.stringify({ player, username, score }),
-  }, "POST:/submit-score");
+  }, "POST:/submit-score", /* isGET */ false);
 }
 
 export async function fetchLeaderboard() {
@@ -90,7 +92,6 @@ export async function fetchPlayer(a) {
 }
 
 export async function fetchUsername(a) {
-  // endpoint eksternal (MGID) — juga dipaksa no-store + retry
   return fetchJSON(
     `https://monad-games-id-site.vercel.app/api/check-wallet?wallet=${a}`,
     {},
