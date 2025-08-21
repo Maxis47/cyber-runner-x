@@ -210,3 +210,28 @@ a:hover{ opacity:.85; }
   body::before, body::after{ animation: none !important; }
   .card, .btn{ transition: none !important; }
 }
+/* ========= FIX: jangan ada teks kepotong di judul / header ========= */
+
+/* Pastikan konten utama punya stacking context sendiri di atas aurora */
+main { isolation: isolate; position: relative; z-index: 1; }
+
+/* Grid & section tidak memotong konten anak */
+section, .grid { overflow: visible; }
+
+/* Semua heading h2 yang pakai Tailwind .text-xl.font-semibold diberi ruang aman */
+h2.text-xl.font-semibold {
+  line-height: 1.4 !important;
+  padding-top: 8px;          /* tambahkan ruang atas agar nggak “keiris” */
+  display: block;
+}
+
+/* Heading di bagian atas card juga diberi ruang ekstra */
+.card > .font-semibold,
+.card > .flex .font-semibold { padding-top: 8px; }
+
+/* Jaga container judul di dalam card tidak meng-clip isi */
+.card { overflow: visible; }
+
+/* Tambahan kecil untuk kontainer progress/chart supaya label tidak “mepet” */
+.card .recharts-wrapper { overflow: visible; }
+
