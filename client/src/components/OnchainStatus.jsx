@@ -127,7 +127,29 @@ export default function OnchainStatus({ state }) {
   const stageNorm =
     merged.stage === "mined" && merged.status === 0 ? "failed" : merged.stage || "idle";
 
-  const explorerUrl = merged.explorerUrl || null;
+  // ===== Normalisasi explorer URL (hindari /tx/tx/<hash>) =====
+  const explorerUrl = useMemo(() => {
+    const raw = merged.explorerUrl || "";
+    const prefix = (import.meta.env.VITE_EXPLORER_TX_PREFIX || "https://testnet.monadexplorer.com/tx/")
+      .replace(/\/+$/, "/"); // pastikan hanya 1 slash di akhir
+
+    // Jika server sudah kasih URL → pakai & rapikan
+    if (raw) {
+      let u = String(raw);
+      // rapikan '.../tx/tx/...'
+      u = u.replace(/\/tx\/+tx\//, "/tx/");
+      // rapikan '//' ganda kecuali setelah 'http(s):'
+      u = u.replace(/(?<!:)\/{2,}/g, "/");
+      // jika hash belum muncul & url berakhir di /tx atau /tx/ → tambah hash
+      if (hash && !u.toLowerCase().includes(hash.toLowerCase())) {
+        if (/\/tx\/?$/.test(u)) u = `${u.replace(/\/+$/, "/")}${hash}`;
+      }
+      return u;
+    }
+
+    // Fallback: bentuk dari prefix FE
+    return hash ? `${prefix}${hash}` : null;
+  }, [merged.explorerUrl, hash]);
 
   const badge = (txt, cls) => (
     <span className={`px-2 py-0.5 rounded-full text-[11px] ${cls}`}>{txt}</span>
