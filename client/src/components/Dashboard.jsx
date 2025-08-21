@@ -1,142 +1,214 @@
-import { useMemo } from 'react';
-import useDashboardLive from '../hooks/useDashboardLive';
-import {
-  ResponsiveContainer,
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  Tooltip,
-  CartesianGrid,
-} from 'recharts';
+// client/src/components/Dashboard.jsx
+import { useEffect, useRef, useState } from 'react';
+import { fetchLeaderboard, fetchPlayer } from '../lib/api';
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import HowToPlay from './HowToPlay';
 
-function shortAddr(a = '') {
-  return a ? `${a.slice(0, 6)}…${a.slice(-4)}` : '—';
+function StatCard({ label, value, hint }) {
+  return (
+    <div className="card-tight">
+      <div className="metric">{label}</div>
+      <div className="metric-xl mt-1">{value}</div>
+      {hint && <div className="text-[11px] text-zinc-500 mt-1">{hint}</div>}
+    </div>
+  );
 }
 
-function dateLabel(iso) {
-  try {
-    const d = new Date(iso);
-    return d.toLocaleString();
-  } catch {
-    return iso || '—';
-  }
+function Leaderboard({ rows=[] }) {
+  return (
+    <div className="card">
+      <div className="flex items-center justify-between mb-2">
+        <div className="font-semibold">Global Leaderboard</div>
+        <div className="text-xs text-zinc-400">{rows.length} entries</div>
+      </div>
+      <div className="rounded-xl border border-zinc-800 overflow-hidden">
+        <table className="min-w-full text-[13px]">
+          <thead className="bg-black/70 backdrop-blur text-zinc-400">
+            <tr>
+              <th className="text-left p-2">#</th>
+              <th className="text-left p-2">Username</th>
+              <th className="text-left p-2">Address</th>
+              <th className="text-right p-2">Best Distance</th>
+              <th className="text-left p-2">Last Played</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.slice(0,8).map((r,i)=>(
+              <tr key={r.player} className="border-t border-zinc-800">
+                <td className="p-2 w-8">{i+1}</td>
+                <td className="p-2">{r.username ? `@${r.username}` : '—'}</td>
+                <td className="p-2 font-mono">{r.player.slice(0,6)}…{r.player.slice(-4)}</td>
+                <td className="p-2 text-right font-semibold">{r.high_score}</td>
+                <td className="p-2 text-zinc-400">{new Date(r.last_played).toLocaleString()}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {rows.length>8 && <div className="mt-1 text-[11px] text-zinc-500">Showing top 8</div>}
+    </div>
+  );
 }
 
 export default function Dashboard({ identity }) {
-  const { leaderboard, global, player } = useDashboardLive(identity);
+  const [rows, setRows] = useState([]);
+  const [me, setMe] = useState(null);
 
-  const rows = useMemo(() => leaderboard ?? [], [leaderboard]);
-  const history = useMemo(() => (player?.history ?? []).slice().reverse(), [player]);
+  // ====== SSE URLs ======
+  const API = import.meta.env.VITE_API_URL;
+  const lbESRef = useRef(null);
+  const meESRef = useRef(null);
+  const lbPollRef = useRef(null);
+  const mePollRef = useRef(null);
+
+  // ====== Initial fetch (render pertama cepat) ======
+  useEffect(()=>{ fetchLeaderboard().then((list)=>{
+    // Pastikan urut & bersih
+    const sorted = (list||[]).slice().sort((a,b)=> (b.high_score - a.high_score) || b.last_played.localeCompare(a.last_played));
+    setRows(sorted);
+  }).catch(()=>{}); },[]);
+
+  useEffect(()=>{
+    if(identity?.address){
+      fetchPlayer(identity.address).then(setMe).catch(()=>{});
+    }
+  },[identity]);
+
+  // ====== SSE Leaderboard (realtime) + fallback polling ======
+  useEffect(()=>{
+    // Bersihkan kalau ada sesi sebelumnya
+    if(lbESRef.current){ lbESRef.current.close(); lbESRef.current = null; }
+    if(lbPollRef.current){ clearInterval(lbPollRef.current); lbPollRef.current = null; }
+
+    // Coba SSE kalau tersedia API
+    if(API && 'EventSource' in window){
+      try{
+        const es = new EventSource(`${API}/stream/leaderboard?ts=${Date.now()}`);
+        lbESRef.current = es;
+        es.onmessage = (ev)=>{
+          try{
+            const msg = JSON.parse(ev.data);
+            // server kirim { type: 'leaderboard', data: [...] }
+            const data = Array.isArray(msg) ? msg : msg?.data;
+            if(Array.isArray(data)){
+              const sorted = data.slice().sort((a,b)=> (b.high_score - a.high_score) || b.last_played.localeCompare(a.last_played));
+              setRows(sorted);
+            }
+          }catch{}
+        };
+        es.onerror = ()=>{ try{ es.close(); }catch{}; lbESRef.current = null; };
+        return ()=>{ try{ es.close(); }catch{}; lbESRef.current = null; };
+      }catch{/* fallback below */}
+    }
+
+    // Fallback: polling ringan tiap 1.2s
+    lbPollRef.current = setInterval(()=>{
+      fetchLeaderboard().then((list)=>{
+        const sorted = (list||[]).slice().sort((a,b)=> (b.high_score - a.high_score) || b.last_played.localeCompare(a.last_played));
+        setRows(sorted);
+      }).catch(()=>{});
+    },1200);
+
+    return ()=>{ if(lbPollRef.current) clearInterval(lbPollRef.current); lbPollRef.current = null; };
+  },[API]);
+
+  // ====== SSE Player (realtime) + fallback polling ======
+  useEffect(()=>{
+    // Bersihkan sesi lama
+    if(meESRef.current){ meESRef.current.close(); meESRef.current = null; }
+    if(mePollRef.current){ clearInterval(mePollRef.current); mePollRef.current = null; }
+    const addr = identity?.address;
+    if(!addr) return;
+
+    // SSE
+    if(API && 'EventSource' in window){
+      try{
+        const es = new EventSource(`${API}/stream/player/${addr.toLowerCase()}?ts=${Date.now()}`);
+        meESRef.current = es;
+        es.onmessage = (ev)=>{
+          try{
+            const msg = JSON.parse(ev.data);
+            // server kirim { type: 'player', addr, data: {...} }
+            const data = msg?.data ?? msg;
+            if(data && typeof data === 'object') setMe(data);
+          }catch{}
+        };
+        es.onerror = ()=>{ try{ es.close(); }catch{}; meESRef.current = null; };
+        return ()=>{ try{ es.close(); }catch{}; meESRef.current = null; };
+      }catch{/* fallback below */}
+    }
+
+    // Fallback polling tiap 1.2s
+    mePollRef.current = setInterval(()=>{
+      fetchPlayer(addr).then(setMe).catch(()=>{});
+    },1200);
+
+    return ()=>{ if(mePollRef.current) clearInterval(mePollRef.current); mePollRef.current = null; };
+  },[API, identity]);
+
+  // ====== Nilai kartu (akurat) ======
+  // Players: jumlah address unik pada leaderboard
+  const playersCount = new Set((rows||[]).map(r=>r.player)).size;
+
+  // Top Distance: ambil max dari semua high_score (lebih aman daripada rows[0])
+  const topDistance = (rows||[]).reduce((m,r)=> Math.max(m, r?.high_score ?? 0), 0);
+
+  // Your PB
+  const yourPB = me?.best ?? 0;
+
+  // Sessions(24h) — akurat: hitung dari history user 24 jam terakhir
+  const sessions24h = (() => {
+    const hist = me?.history || [];
+    if(hist.length === 0) return 0;
+    const since = Date.now() - 24*60*60*1000;
+    return hist.filter(h => {
+      const t = new Date(h.at).getTime();
+      return Number.isFinite(t) && t >= since;
+    }).length;
+  })();
 
   return (
-    <div className="space-y-6">
-      {/* Kartu ringkas */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <div className="card p-4">
-          <div className="text-xs uppercase tracking-wide text-zinc-400">Players</div>
-          <div className="text-2xl font-semibold mt-1">{global?.players ?? '—'}</div>
+    <div className="grid grid-cols-1 2xl:grid-cols-3 gap-6">
+      {/* LEFT: Stats + Leaderboard */}
+      <div className="2xl:col-span-2 space-y-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <StatCard label="Players" value={playersCount} />
+          <StatCard label="Top Distance" value={topDistance} hint="Global best (m)" />
+          <StatCard label="Your PB" value={yourPB} hint="Personal best (m)" />
+          <StatCard label="Sessions" value={sessions24h} hint="24h total" />
         </div>
-        <div className="card p-4">
-          <div className="text-xs uppercase tracking-wide text-zinc-400">Top Distance</div>
-          <div className="text-2xl font-semibold mt-1">{global?.global_best ?? '—'}</div>
-          <div className="text-[11px] text-zinc-500">Global best (m)</div>
-        </div>
-        <div className="card p-4">
-          <div className="text-xs uppercase tracking-wide text-zinc-400">Your PB</div>
-          <div className="text-2xl font-semibold mt-1">{player?.best ?? '—'}</div>
-          <div className="text-[11px] text-zinc-500">Personal best (m)</div>
-        </div>
-        <div className="card p-4">
-          <div className="text-xs uppercase tracking-wide text-zinc-400">Sessions</div>
-          <div className="text-2xl font-semibold mt-1">{global?.last24h ?? '—'}</div>
-          <div className="text-[11px] text-zinc-500">24h total</div>
-        </div>
-      </div>
 
-      {/* Leaderboard global */}
-      <div className="card p-4">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-lg font-semibold">Global Leaderboard</h3>
-          <div className="text-xs text-zinc-500">
-            {rows?.length || 0} entries
-          </div>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="min-w-full text-sm">
-            <thead className="text-left text-zinc-400">
-              <tr className="border-b border-white/5">
-                <th className="py-2 pr-3">#</th>
-                <th className="py-2 pr-3">Username</th>
-                <th className="py-2 pr-3">Address</th>
-                <th className="py-2 pr-3">Best Distance</th>
-                <th className="py-2 pr-3">Last Played</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.length === 0 && (
-                <tr>
-                  <td colSpan={5} className="py-6 text-center text-zinc-500">
-                    No entries yet.
-                  </td>
-                </tr>
-              )}
-              {rows.map((r, i) => (
-                <tr key={r.player + i} className="border-b border-white/5">
-                  <td className="py-2 pr-3">{i + 1}</td>
-                  <td className="py-2 pr-3">{r.username || '—'}</td>
-                  <td className="py-2 pr-3 font-mono">{shortAddr(r.player)}</td>
-                  <td className="py-2 pr-3">{r.high_score}</td>
-                  <td className="py-2 pr-3">{dateLabel(r.last_played)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+        <Leaderboard rows={rows} />
 
-      {/* Progress pemain */}
-      <div className="card p-4">
-        <h3 className="text-lg font-semibold mb-3">Your Progress</h3>
-        {history.length === 0 ? (
-          <div className="text-sm text-zinc-500">No runs yet. Play to see your progress here.</div>
-        ) : (
-          <div className="h-56">
+        <div className="card">
+          <div className="font-semibold mb-2">Your Progress</div>
+          <div className="h-[220px]">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={history}>
+              <AreaChart
+                data={(me?.history??[])
+                  .slice()
+                  .reverse()
+                  .map(h=>({ t:new Date(h.at).toLocaleTimeString(), s:h.score }))}
+              >
                 <defs>
-                  <linearGradient id="c" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopOpacity={0.35}/>
-                    <stop offset="95%" stopOpacity={0}/>
+                  <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#c084fc" stopOpacity={0.9}/>
+                    <stop offset="95%" stopColor="#c084fc" stopOpacity={0.1}/>
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeOpacity={0.1} vertical={false} />
-                <XAxis
-                  dataKey="at"
-                  tickFormatter={(v) => {
-                    try {
-                      const d = new Date(v);
-                      return d.toLocaleTimeString();
-                    } catch { return v; }
-                  }}
-                  minTickGap={24}
-                />
-                <YAxis width={40} />
-                <Tooltip
-                  formatter={(value, name) => [value, name === 'score' ? 'Distance (m)' : name]}
-                  labelFormatter={(l) => dateLabel(l)}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="score"
-                  strokeOpacity={0.9}
-                  fillOpacity={1}
-                  fill="url(#c)"
-                />
+                <XAxis dataKey="t" hide/>
+                <YAxis hide/>
+                <Tooltip/>
+                <Area type="monotone" dataKey="s" stroke="#c084fc" fillOpacity={1} fill="url(#g)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
-        )}
+        </div>
+      </div>
+
+      {/* RIGHT: only How to Play now */}
+      <div className="space-y-6">
+        <HowToPlay />
       </div>
     </div>
   );
