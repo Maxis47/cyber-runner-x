@@ -2,13 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ====== Fondasi stabil & anti autosize ====== */
+/* ====== Fondasi stabil ====== */
 :root { color-scheme: dark; }
 /* kunci tinggi ke --app-vh / 100svh agar tidak auto-zoom saat scroll */
 html, body, #root { height: var(--app-vh, 100svh); min-height: var(--app-vh, 100svh); }
 html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 * { -webkit-tap-highlight-color: transparent; }
-input, select, textarea, button { font-size: 16px; } /* cegah auto-zoom fokus input */
+/* cegah auto-zoom saat fokus input (iOS/Android) */
+input, select, textarea, button { font-size: 16px; }
 
 /* Saat OS paksa high-contrast, jangan dibalik warnanya */
 @media (forced-colors: active) {
@@ -16,7 +17,7 @@ input, select, textarea, button { font-size: 16px; } /* cegah auto-zoom fokus in
   body { background: #0b0b12 !important; color: #e9e9f8 !important; }
 }
 
-/* ====== Aurora premium (vivid & sinkron) ====== */
+/* ====== Aurora premium ====== */
 body{
   --bg1:#07070b;
   --bg2:#0b0b14;
@@ -35,7 +36,7 @@ body{
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ====== Komponen yang sudah kamu pakai (glassy, premium) ====== */
+/* ====== Komponen glassy ====== */
 .card{
   @apply rounded-2xl border border-white/10 p-4;
   background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
@@ -57,7 +58,7 @@ body{
 .metric     { @apply text-[11px] uppercase tracking-wide text-zinc-400; }
 .metric-xl  { @apply text-2xl font-bold; }
 
-/* Tooltip Recharts agar kontras */
+/* Tooltip Recharts */
 .recharts-default-tooltip {
   background: rgba(0,0,0,.86) !important;
   border: 1px solid rgba(255,255,255,.12) !important;
