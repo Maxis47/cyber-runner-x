@@ -1,12 +1,10 @@
 {
   "name": "cyber-runner-x-server",
-  "version": "1.2.2",
-  "private": true,
+  "version": "1.0.0",
   "type": "module",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node --watch server.js"
+    "start": "node server.js"
   },
   "engines": {
     "node": "20.x"
@@ -18,7 +16,6 @@
     "helmet": "^7.1.0",
     "lowdb": "^6.1.1",
     "morgan": "^1.10.0",
-    "nanoid": "^5.0.7",
     "rate-limiter-flexible": "^2.4.2",
     "viem": "^2.33.3"
   }
