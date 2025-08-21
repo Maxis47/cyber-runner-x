@@ -141,30 +141,41 @@ export default function Game({
     const wrap = wrapRef.current;
     if (!c || !wrap) return;
 
-    // DPR: batasi di layar kecil agar ringan & anti "zoomed"
-    const isSmall = (window.innerWidth || 360) <= 480;
-    const dpr = Math.min(window.devicePixelRatio || 1, isSmall ? 1.5 : 2);
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
     W.current.dpr = dpr;
 
-    // Tinggi viewport stabil (address bar mobile)
-    const visualH = (window.visualViewport && window.visualViewport.height) || 0;
-    const viewportH = visualH || window.innerHeight || document.documentElement.clientHeight || 800;
-
     const rect = wrap.getBoundingClientRect ? wrap.getBoundingClientRect() : { top: 0, height: wrap.clientHeight };
-    const availH = Math.max(300, (viewportH - rect.top - 24)); // 24px margin bawah
+    const viewportH = window.innerHeight || document.documentElement.clientHeight || 800;
+    const viewportW = window.innerWidth || document.documentElement.clientWidth || 1024;
+    const isWide = viewportW >= 1024; // desktop / landscape tablet
+
+    // batas lebar container (Tailwind: max-w-[1040px])
     const maxW = wrap.clientWidth || 360;
 
-    let cssW = Math.floor(Math.min(maxW, (availH * 9) / 16));
-    let cssH = Math.floor((cssW * 16) / 9);
-    if (cssH > availH) {
-      cssH = Math.floor(availH);
-      cssW = Math.floor((cssH * 9) / 16);
-    }
-    cssW = Math.max(220, cssW);
-    cssH = Math.max(392, cssH);
+    let cssW, cssH;
 
-    c.width = Math.floor(cssW * dpr);
-    c.height = Math.floor(cssH * dpr);
+    if (isWide) {
+      // ---- DESKTOP: scale dari LEBAR container (agar tidak "kecetit")
+      cssW = Math.floor(Math.max(220, Math.min(maxW, wrap.clientWidth || maxW)));
+      cssH = Math.floor((cssW * 16) / 9);
+      // biarkan overflow vertical, tapi jangan <392 agar playable di layar pendek
+      cssH = Math.max(392, cssH);
+    } else {
+      // ---- MOBILE POTRET: tetap fit ke sisa tinggi viewport (anti auto-zoom)
+      const safeTop = Math.max(0, rect.top);
+      const availH = Math.max(300, (viewportH - safeTop - 24)); // 24px margin bawah
+      cssW = Math.floor(Math.min(maxW, (availH * 9) / 16));
+      cssH = Math.floor((cssW * 16) / 9);
+      cssW = Math.max(220, cssW);
+      cssH = Math.max(392, cssH);
+    }
+
+    // apply ukuran ke canvas (dengan DPR)
+    const nextW = Math.floor(cssW * dpr);
+    const nextH = Math.floor(cssH * dpr);
+
+    if (c.width !== nextW) c.width = nextW;
+    if (c.height !== nextH) c.height = nextH;
     c.style.width = `${cssW}px`;
     c.style.height = `${cssH}px`;
 
@@ -196,41 +207,20 @@ export default function Game({
   };
 
   useEffect(() => {
-    // throttle ke animation frame supaya tidak "lompat"
-    let alive = true;
-    const schedule = (() => {
-      let ticking = false;
-      return () => {
-        if (ticking) return;
-        ticking = true;
-        requestAnimationFrame(() => {
-          if (!alive) return;
-          ticking = false;
-          resize();
-        });
-      };
-    })();
-
-    schedule(); // initial
-
-    window.addEventListener("resize", schedule, { passive: true });
-    window.addEventListener("orientationchange", schedule, { passive: true });
-
-    if (window.visualViewport) {
-      window.visualViewport.addEventListener("resize", schedule, { passive: true });
-    }
+    resize();
+    const r = () => resize();
+    window.addEventListener("resize", r);
+    window.addEventListener("orientationchange", r);
 
     let ro;
     if ("ResizeObserver" in window && wrapRef.current) {
-      ro = new ResizeObserver(() => schedule());
+      ro = new ResizeObserver(() => resize());
       ro.observe(wrapRef.current);
     }
 
     return () => {
-      alive = false;
-      window.removeEventListener("resize", schedule);
-      window.removeEventListener("orientationchange", schedule);
-      if (window.visualViewport) window.visualViewport.removeEventListener("resize", schedule);
+      window.removeEventListener("resize", r);
+      window.removeEventListener("orientationchange", r);
       if (ro && wrapRef.current) ro.unobserve(wrapRef.current);
     };
   }, []);
@@ -790,11 +780,12 @@ export default function Game({
     for (let i = w.pickups.length - 1; i >= 0; i--) {
       const p = w.pickups[i];
       p.y += p.vy * (dt / 16.6667);
-      ctx.save();
-      ctx.shadowColor = theme.powerGlow; ctx.shadowBlur = 22 * w.dpr;
-      ctx.strokeStyle = theme.power; ctx.lineWidth = 4 * w.dpr;
-      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.stroke();
-      ctx.restore();
+      const ctx2 = ctx;
+      ctx2.save();
+      ctx2.shadowColor = theme.powerGlow; ctx2.shadowBlur = 22 * w.dpr;
+      ctx2.strokeStyle = theme.power; ctx2.lineWidth = 4 * w.dpr;
+      ctx2.beginPath(); ctx2.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx2.stroke();
+      ctx2.restore();
       if (p.y - p.r > ctx.canvas.height + 70 * w.dpr) w.pickups.splice(i, 1);
     }
   };
