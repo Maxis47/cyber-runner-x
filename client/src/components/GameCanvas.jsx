@@ -19,11 +19,12 @@ export default function GameCanvas({ wrapRef, canvasRef, className = "" }) {
       style={{
         marginLeft: "auto",
         marginRight: "auto",
-        /* kunci tinggi container terhadap vh beku → tidak "zoomed" saat scroll */
+        /* kunci tinggi relatif ke viewport yang beku → tidak “zoomed” saat scroll */
         height: "auto",
         maxHeight: "calc(var(--app-vh, 100svh) - 24px)",
         touchAction: "manipulation",
         overscrollBehavior: "contain",
+        contain: "layout size",      // kurangi trigger ResizeObserver karena toolbar
       }}
     >
       <canvas
