@@ -141,11 +141,16 @@ export default function Game({
     const wrap = wrapRef.current;
     if (!c || !wrap) return;
 
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    // DPR: batasi di layar kecil agar ringan & anti "zoomed"
+    const isSmall = (window.innerWidth || 360) <= 480;
+    const dpr = Math.min(window.devicePixelRatio || 1, isSmall ? 1.5 : 2);
     W.current.dpr = dpr;
 
+    // Tinggi viewport stabil (address bar mobile)
+    const visualH = (window.visualViewport && window.visualViewport.height) || 0;
+    const viewportH = visualH || window.innerHeight || document.documentElement.clientHeight || 800;
+
     const rect = wrap.getBoundingClientRect ? wrap.getBoundingClientRect() : { top: 0, height: wrap.clientHeight };
-    const viewportH = window.innerHeight || document.documentElement.clientHeight || 800;
     const availH = Math.max(300, (viewportH - rect.top - 24)); // 24px margin bawah
     const maxW = wrap.clientWidth || 360;
 
@@ -191,20 +196,41 @@ export default function Game({
   };
 
   useEffect(() => {
-    resize();
-    const r = () => resize();
-    window.addEventListener("resize", r);
-    window.addEventListener("orientationchange", r);
+    // throttle ke animation frame supaya tidak "lompat"
+    let alive = true;
+    const schedule = (() => {
+      let ticking = false;
+      return () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+          if (!alive) return;
+          ticking = false;
+          resize();
+        });
+      };
+    })();
+
+    schedule(); // initial
+
+    window.addEventListener("resize", schedule, { passive: true });
+    window.addEventListener("orientationchange", schedule, { passive: true });
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("resize", schedule, { passive: true });
+    }
 
     let ro;
     if ("ResizeObserver" in window && wrapRef.current) {
-      ro = new ResizeObserver(() => resize());
+      ro = new ResizeObserver(() => schedule());
       ro.observe(wrapRef.current);
     }
 
     return () => {
-      window.removeEventListener("resize", r);
-      window.removeEventListener("orientationchange", r);
+      alive = false;
+      window.removeEventListener("resize", schedule);
+      window.removeEventListener("orientationchange", schedule);
+      if (window.visualViewport) window.visualViewport.removeEventListener("resize", schedule);
       if (ro && wrapRef.current) ro.unobserve(wrapRef.current);
     };
   }, []);
@@ -318,7 +344,7 @@ export default function Game({
     poll();
   };
 
-  /** ===== Submit on‑chain ===== */
+  /** ===== Submit on-chain ===== */
   const submitOnchainNow = async (score) => {
     if (submittedRef.current) return;  // cegah double submit per run
     submittedRef.current = true;
@@ -1023,7 +1049,7 @@ export default function Game({
         <div className="opacity-60">Tip: use ← → or swipe to switch lanes.</div>
       </div>
 
-      {/* On‑chain Panel */}
+      {/* On-chain Panel */}
       <div className="mt-4">
         <OnchainStatus state={chainState} />
       </div>
