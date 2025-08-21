@@ -9,6 +9,9 @@ body { min-height: var(--app-vh, 100vh); }
 html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 * { -webkit-tap-highlight-color: transparent; }
 
+/* Cegah auto-zoom saat fokus input (Android/iOS) */
+input, select, textarea, button { font-size: 16px; }
+
 /* Saat OS paksa high-contrast, jangan dibalik warnanya */
 @media (forced-colors: active) {
   * { forced-color-adjust: none; }
