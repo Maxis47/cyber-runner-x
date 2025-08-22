@@ -8,17 +8,19 @@ import React, { useEffect, useMemo, useState } from "react";
  * - Swipe mulus: touchAction: 'none'
  *
  * Tambahan: kontrol ukuran (+ / -)
- * - Langsung mengubah lebar wrapper → Game.jsx (ResizeObserver) otomatis menyesuaikan ukuran canvas.
+ * - Mengubah lebar wrapper → Game.jsx (ResizeObserver) otomatis menyesuaikan ukuran canvas.
  * - Persist di localStorage: "crx_canvas_step"
+ * - DIBATASI oleh tinggi viewport supaya di desktop tidak “kepanjangan”.
  */
 export default function GameCanvas({ wrapRef, canvasRef, className = "" }) {
-  // 5 langkah ukuran: dari kompak → ekstra besar (aman di HP/Tablet/Desktop)
+  // Langkah ukuran (S → XXL) dengan batas tinggi (vh) agar tidak terlalu panjang di desktop.
+  // Tinggi kanvas ~ (width * 16 / 9) sehingga width dibatasi oleh calc(<vh> * 9 / 16).
   const SIZE_STEPS = [
-    { id: 0, width: "min(84vw, 480px)", maxPx: 480 },
-    { id: 1, width: "min(92vw, 560px)", maxPx: 560 }, // DEFAULT (sama seperti sebelumnya)
-    { id: 2, width: "min(96vw, 640px)", maxPx: 640 },
-    { id: 3, width: "min(98vw, 720px)", maxPx: 720 },
-    { id: 4, width: "min(100vw, 820px)", maxPx: 820 },
+    { id: 0, width: "min(84vw, 420px, calc(70vh * 9 / 16))", maxPx: 420 }, // S
+    { id: 1, width: "min(90vw, 540px, calc(78vh * 9 / 16))", maxPx: 540 }, // M (default)
+    { id: 2, width: "min(94vw, 620px, calc(82vh * 9 / 16))", maxPx: 620 }, // L
+    { id: 3, width: "min(96vw, 700px, calc(86vh * 9 / 16))", maxPx: 700 }, // XL
+    { id: 4, width: "min(98vw, 780px, calc(90vh * 9 / 16))", maxPx: 780 }, // XXL
   ];
 
   const [step, setStep] = useState(() => {
@@ -44,11 +46,10 @@ export default function GameCanvas({ wrapRef, canvasRef, className = "" }) {
       style={{
         marginLeft: "auto",
         marginRight: "auto",
-        // RESPONSIF berbasis pilihan user:
+        // RESPONSIF berbasis pilihan user + dibatasi tinggi layar:
         width: sz.width,
         maxWidth: `${sz.maxPx}px`,
         minWidth: "300px",
-        // Pastikan kanvas tidak menutupi komponen lain
         overflow: "hidden",
         position: "relative",
         zIndex: 0,
