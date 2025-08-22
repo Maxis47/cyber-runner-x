@@ -8,63 +8,49 @@ import React, { useEffect, useRef, useState } from "react";
  * - Swipe mulus: touchAction: 'none'
  *
  * Penyesuaian ukuran (HANYA di sini):
- * - Di desktop/laptop, bila lebar kanvas terlalu kecil (kolom grid sempit),
- *   kanvas otomatis di-scale up (CSS transform) sampai target ~420–520px
- *   atau ~28vw (maks 1.6x). Mapping pointer tetap akurat karena
- *   Game.jsx menghitung koordinat via getBoundingClientRect().
+ * - Kita batasi lebar wrapper secara responsif supaya Game.jsx selalu
+ *   menghitung kanvas 9:16 pada ukuran yang pas di semua device.
  */
 export default function GameCanvas({ wrapRef, canvasRef, className = "" }) {
-  const [scale, setScale] = useState(1);
+  const [maxW, setMaxW] = useState(520); // px, responsif
   const roRef = useRef(null);
 
   useEffect(() => {
-    const canvasEl = canvasRef?.current;
-    const wrapEl = wrapRef?.current;
-    if (!canvasEl) return;
+    const compute = () => {
+      const vw = Math.max(320, Math.floor(window.innerWidth || 320));
 
-    const computeScale = () => {
-      const rect = canvasEl.getBoundingClientRect();
-      const vw = window.innerWidth || 0;
+      // Target responsif:
+      // - Mobile/Tablet: ~92vw (biar penuh & tidak kecil)
+      // - Desktop: ~26–30vw namun dibatasi agar tidak kebesaran
+      const idealByVw =
+        vw >= 1024 ? Math.round(vw * 0.28) : Math.round(vw * 0.92);
 
-      // Default: tidak discale
-      let next = 1;
+      // Batas aman universal
+      const MIN = vw >= 1024 ? 380 : 300; // min visual px
+      const MAX = 560;                    // max supaya desktop tidak terlalu besar
 
-      // Hanya perbesar di layar lebar
-      if (vw >= 1024 && rect.width > 0) {
-        // Target lebar visual: 28vw, dibatasi 420–520px
-        const targetByVw = Math.round(vw * 0.28);
-        const target = Math.max(420, Math.min(520, targetByVw));
-        next = Math.max(1, Math.min(1.6, target / rect.width));
-      }
-
-      setScale(next);
-
-      // Reserve ruang wrapper agar tidak overlap ketika discale
-      if (wrapEl) {
-        const scaledH = rect.height * next;
-        // +16px buffer agar bayangan/outline tak terpotong
-        wrapEl.style.minHeight = `${Math.ceil(scaledH) + 16}px`;
-      }
+      const next = Math.max(MIN, Math.min(idealByVw, MAX));
+      setMaxW(next);
     };
 
-    // Observe perubahan ukuran canvas dari Game.jsx (resize dinamis)
-    const ro = new ResizeObserver(() => computeScale());
-    ro.observe(canvasEl);
-    roRef.current = ro;
+    compute();
+    window.addEventListener("resize", compute);
+    window.addEventListener("orientationchange", compute);
 
-    // Recompute saat resize/orientasi
-    window.addEventListener("resize", computeScale);
-    window.addEventListener("orientationchange", computeScale);
-
-    // run sekali saat mount
-    computeScale();
+    // Observe perubahan lebar kolom parent → trigger ulang hitung di Game.jsx
+    const el = wrapRef?.current;
+    if (el && "ResizeObserver" in window) {
+      const ro = new ResizeObserver(() => compute());
+      ro.observe(el);
+      roRef.current = ro;
+    }
 
     return () => {
-      window.removeEventListener("resize", computeScale);
-      window.removeEventListener("orientationchange", computeScale);
-      if (roRef.current && canvasEl) roRef.current.disconnect();
+      window.removeEventListener("resize", compute);
+      window.removeEventListener("orientationchange", compute);
+      if (roRef.current && wrapRef?.current) roRef.current.disconnect();
     };
-  }, [canvasRef, wrapRef]);
+  }, [wrapRef]);
 
   return (
     <div
@@ -78,7 +64,9 @@ export default function GameCanvas({ wrapRef, canvasRef, className = "" }) {
       style={{
         marginLeft: "auto",
         marginRight: "auto",
-        // izinkan kanvas membesar keluar sedikit tanpa memotong
+        // KUNCI: batasi lebar wrapper secara responsif (dipakai Game.jsx untuk hitung 9:16)
+        maxWidth: `${maxW}px`,
+        // Jangan potong kanvas/glow
         overflow: "visible",
       }}
     >
@@ -96,9 +84,6 @@ export default function GameCanvas({ wrapRef, canvasRef, className = "" }) {
           WebkitUserSelect: "none",
           msUserSelect: "none",
           WebkitTouchCallout: "none",
-          // scale up khusus desktop (lihat useEffect)
-          transform: scale !== 1 ? `scale(${scale})` : undefined,
-          transformOrigin: "top center",
         }}
       />
     </div>
